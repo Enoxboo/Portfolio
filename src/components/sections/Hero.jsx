@@ -48,9 +48,10 @@ const Hero = () => {
                         initial={{opacity: 0, y: 20}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.5, delay: 0.4}}
-                        className="text-xl md:text-2xl text-primary/90 mb-6"
+                        className="text-xl md:text-2xl mb-6"
                     >
-                        aka <span className="font-bold">Enoxboo</span>
+                        aka <span
+                        className="font-bold bg-gradient-to-r from-secondary via-primary to-secondary bg-clip-text text-transparent animate-gradient bg-300%">Enoxboo</span>
                     </motion.div>
 
                     {/* Tagline */}

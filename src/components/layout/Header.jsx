@@ -24,7 +24,7 @@ const Header = () => {
             <div className="flex items-center justify-between">
                 {/* Logo */}
                 <a href="#hero" className="text-2xl font-bold">
-                    <span className="text-primary">Enoxboo</span>
+                    <span className="font-bold bg-gradient-to-r from-secondary via-primary to-secondary bg-clip-text text-transparent animate-gradient bg-300%">Enoxboo</span>
                 </a>
 
                 {/* Desktop Navigation */}
