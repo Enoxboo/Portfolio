@@ -1,0 +1,33 @@
+{
+  "featured": {
+    "id": "game-project",
+    "title": "Project-R",
+    "description": "Un jeu d'action rogue-like nerveux",
+    "longDescription": "Un jeu d'action rogue-lite au nerveux dans lequel vous incarnez un mage-épéiste et son alter-compagnon, passant de l'un à l'autre grâce à un système de tag afin d'effectuer de puissants combos élémentaires dans des donjons faits-mains peuplés de boss mémorables.",
+    "image": "/images/game-preview.png",
+    "tags": ["Game Dev", "Godot", "GDScript"],
+    "github": "https://github.com/Enoxboo/Project-R",
+    "demo": null,
+    "status": "En développement"
+  },
+  "projects": [
+    {
+      "id": "project-1",
+      "title": "Sandy's Art Photographies",
+      "description": "Site vitrine d'un professionnel de la photographie.",
+      "image": "/images/project1.png",
+      "tags": ["React", "Node.js", "SQLite", "JavaScript"],
+      "github": "https://github.com/Enoxboo/sandysart-photo",
+      "demo": "sandysartphotographies.com"
+    },
+    {
+      "id": "project-2",
+      "title": "Sprout Island",
+      "description": "Un jeu de survie sur une île déserte développé en Python avec Tkinter.",
+      "image": "/images/project2.png",
+      "tags": ["Python", "Game Dev", "Tkinter"],
+      "github": "https://github.com/Enoxboo/Sprout-Island",
+      "demo": null
+    }
+  ]
+}
