@@ -37,3 +37,14 @@
 .delay-1000 {
     animation-delay: 1000ms;
 }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

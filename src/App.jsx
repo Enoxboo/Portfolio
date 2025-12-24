@@ -1,6 +1,7 @@
 import Header from './components/Header'
 import Hero from './components/Hero'
 import About from './components/About'
+import Skills from './components/Skills'
 
 function App() {
     return (
@@ -17,10 +18,7 @@ function App() {
             <div className="pt-16 relative z-10">
                 <Hero />
                 <About />
-
-                <section id="skills" className="min-h-screen container mx-auto px-6 flex items-center">
-                    <h2 className="text-4xl font-bold">Section Compétences</h2>
-                </section>
+                <Skills />
 
                 <section id="projects" className="min-h-screen container mx-auto px-6 flex items-center">
                     <h2 className="text-4xl font-bold">Section Projets</h2>
