@@ -1,22 +1,13 @@
 import Header from './components/Header'
+import Hero from './components/Hero'
 
 function App() {
     return (
         <div className="min-h-screen bg-[var(--color-dark-bg)] text-white">
             <Header />
 
-            {/* Contenu temporaire pour tester le scroll */}
-            <div className="pt-20">
-                <section id="hero" className="min-h-screen container mx-auto px-6 flex items-center">
-                    <div>
-                        <h1 className="text-6xl font-bold text-[var(--color-ethereal-400)]">
-                            Matteo Marquant
-                        </h1>
-                        <p className="mt-4 text-xl text-gray-400">
-                            Header avec navigation ✓
-                        </p>
-                    </div>
-                </section>
+            <div className="pt-16">
+                <Hero />
 
                 <section id="about" className="min-h-screen container mx-auto px-6 flex items-center">
                     <h2 className="text-4xl font-bold">Section À propos</h2>
