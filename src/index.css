@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+    --color-ethereal-50: #faf5ff;
+    --color-ethereal-100: #f3e8ff;
+    --color-ethereal-200: #e9d5ff;
+    --color-ethereal-300: #d8b4fe;
+    --color-ethereal-400: #c084fc;
+    --color-ethereal-500: #a855f7;
+    --color-ethereal-600: #9333ea;
+    --color-ethereal-700: #7e22ce;
+    --color-ethereal-800: #6b21a8;
+    --color-ethereal-900: #581c87;
+
+    --color-dark-bg: #0a0a0f;
+    --color-dark-surface: #131318;
+    --color-dark-border: #1f1f29;
+}
