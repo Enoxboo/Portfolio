@@ -1,5 +1,6 @@
 import Header from './components/Header'
 import Hero from './components/Hero'
+import About from './components/About'
 
 function App() {
     return (
@@ -8,10 +9,7 @@ function App() {
 
             <div className="pt-16">
                 <Hero />
-
-                <section id="about" className="min-h-screen container mx-auto px-6 flex items-center">
-                    <h2 className="text-4xl font-bold">Section À propos</h2>
-                </section>
+                <About />
 
                 <section id="skills" className="min-h-screen container mx-auto px-6 flex items-center">
                     <h2 className="text-4xl font-bold">Section Compétences</h2>
