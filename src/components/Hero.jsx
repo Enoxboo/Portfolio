@@ -22,12 +22,11 @@ function Hero() {
                     </div>
 
                     {/* Nom */}
-                    <h1 className="text-7xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-[var(--color-ethereal-400)] via-[var(--color-ethereal-300)] to-[var(--color-ethereal-500)] bg-clip-text text-transparent">
-                        Matteo Marquant
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-[var(--color-ethereal-400)] via-[var(--color-ethereal-300)] to-[var(--color-ethereal-500)] bg-clip-text text-transparent">                        Matteo Marquant
                     </h1>
 
                     {/* Description */}
-                    <p className="text-xl md:text-2xl text-gray-400 mb-8 leading-relaxed">
+                    <p className="text-lg sm:text-xl md:text-2xl text-gray-400 mb-8 leading-relaxed">
                         Étudiant en B2 Informatique passionné par le développement.
                         <br />
                         De la création de jeux à l'architecture web.
