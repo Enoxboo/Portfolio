@@ -9,13 +9,6 @@ function Hero() {
 
     return (
         <section className="min-h-screen relative flex items-center justify-center overflow-hidden">
-            {/* Effet de fond ethereal */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[var(--color-ethereal-600)] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" />
-                <div className="absolute top-1/3 -right-20 w-96 h-96 bg-[var(--color-ethereal-800)] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000" />
-                <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-[var(--color-ethereal-700)] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-500" />
-            </div>
-
             {/* Contenu principal */}
             <div className="container mx-auto px-6 relative z-10">
                 <div className={`max-w-4xl transition-all duration-1000 ${
