@@ -2,6 +2,7 @@ import Header from './components/Header'
 import Hero from './components/Hero'
 import About from './components/About'
 import Skills from './components/Skills'
+import Projects from "./components/Projects.jsx";
 
 function App() {
     return (
@@ -19,10 +20,7 @@ function App() {
                 <Hero />
                 <About />
                 <Skills />
-
-                <section id="projects" className="min-h-screen container mx-auto px-6 flex items-center">
-                    <h2 className="text-4xl font-bold">Section Projets</h2>
-                </section>
+                <Projects />
 
                 <section id="contact" className="min-h-screen container mx-auto px-6 flex items-center">
                     <h2 className="text-4xl font-bold">Section Contact</h2>
