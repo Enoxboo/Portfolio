@@ -48,3 +48,37 @@
         transform: translateY(0);
     }
 }
+
+/* Scroll fluide */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-dark-border);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ethereal-600);
+}
+
+::selection {
+    background: var(--color-ethereal-600);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
