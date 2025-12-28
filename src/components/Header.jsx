@@ -1,26 +1,37 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 
+/**
+ * Header component with sticky navigation and mobile menu
+ * Features:
+ * - Sticky header with backdrop blur effect on scroll
+ * - Responsive mobile menu with animated burger icon
+ * - Smooth scroll to sections
+ * - Accessibility features (ARIA labels, keyboard navigation)
+ */
 function Header() {
+    // Constants
+    const SCROLL_THRESHOLD = 50
+    const MOBILE_MENU_ANIMATION_DELAY = 50
+
+    // State
     const [scrolled, setScrolled] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+    // Handle scroll effect for header background
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50)
+            setScrolled(window.scrollY > SCROLL_THRESHOLD)
         }
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    // Fermer le menu mobile lors du scroll et gérer le body overflow
+    // Handle mobile menu state and body scroll lock
     useEffect(() => {
-        if (mobileMenuOpen) {
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = 'unset'
-        }
+        // Prevent body scroll when mobile menu is open
+        document.body.style.overflow = mobileMenuOpen ? 'hidden' : 'unset'
 
-        // Fermer le menu si on scroll
+        // Close menu on scroll
         const handleScroll = () => {
             if (mobileMenuOpen) {
                 setMobileMenuOpen(false)
@@ -35,27 +46,40 @@ function Header() {
         }
     }, [mobileMenuOpen])
 
+    /**
+     * Smooth scroll to a section by ID
+     * @param {string} id - Section ID to scroll to
+     */
     const scrollToSection = (id) => {
         const element = document.getElementById(id)
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' })
+            element.scrollIntoView({behavior: 'smooth'})
             setMobileMenuOpen(false)
         }
     }
 
+    /**
+     * Scroll to top of page
+     */
+    const scrollToTop = () => {
+        window.scrollTo({top: 0, behavior: 'smooth'})
+    }
+
+    // Navigation items configuration
     const navItems = [
-        { id: 'about', label: 'À propos', ariaLabel: 'Aller à la section À propos' },
-        { id: 'skills', label: 'Compétences', ariaLabel: 'Aller à la section Compétences' },
-        { id: 'projects', label: 'Projets', ariaLabel: 'Aller à la section Projets' },
-        { id: 'contact', label: 'Contact', ariaLabel: 'Aller à la section Contact' }
+        {id: 'about', label: 'À propos', ariaLabel: 'Aller à la section À propos'},
+        {id: 'skills', label: 'Compétences', ariaLabel: 'Aller à la section Compétences'},
+        {id: 'projects', label: 'Projets', ariaLabel: 'Aller à la section Projets'},
+        {id: 'contact', label: 'Contact', ariaLabel: 'Aller à la section Contact'}
     ]
 
     return (
         <>
+            {/* Main header */}
             <header
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                     scrolled
-                        ? 'bg-[var(--color-dark-surface)]/80 backdrop-blur-md border-b border-[var(--color-dark-border)]'
+                        ? 'bg-dark-surface/80 backdrop-blur-md border-b border-dark-border'
                         : 'bg-transparent'
                 }`}
                 role="banner"
@@ -66,27 +90,27 @@ function Header() {
                     aria-label="Navigation principale"
                 >
                     <div className="flex items-center justify-between">
-                        {/* Logo/Nom */}
+                        {/* Logo */}
                         <button
-                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                            className="text-lg sm:text-xl font-bold text-[var(--color-ethereal-400)] hover:text-[var(--color-ethereal-300)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-ethereal-400)] focus:ring-offset-2 focus:ring-offset-[var(--color-dark-bg)] rounded px-2 py-1 relative z-[60]"
+                            onClick={scrollToTop}
+                            className="text-lg sm:text-xl font-bold text-ethereal-400 hover:text-ethereal-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg rounded px-2 py-1 relative z-60"
                             aria-label="Retour en haut de la page"
                         >
                             MM
                         </button>
 
-                        {/* Navigation Desktop - Hidden on mobile */}
+                        {/* Desktop navigation */}
                         <ul className="hidden md:flex gap-6 lg:gap-8">
                             {navItems.map((item) => (
                                 <li key={item.id}>
                                     <button
                                         onClick={() => scrollToSection(item.id)}
-                                        className="text-sm lg:text-base text-gray-400 hover:text-[var(--color-ethereal-400)] transition-colors duration-200 relative group focus:outline-none focus:text-[var(--color-ethereal-400)]"
+                                        className="text-sm lg:text-base text-gray-400 hover:text-ethereal-400 transition-colors duration-200 relative group focus:outline-none focus:text-ethereal-400"
                                         aria-label={item.ariaLabel}
                                     >
                                         {item.label}
                                         <span
-                                            className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--color-ethereal-400)] transition-all duration-200 group-hover:w-full group-focus:w-full"
+                                            className="absolute -bottom-1 left-0 w-0 h-0.5 bg-ethereal-400 transition-all duration-200 group-hover:w-full group-focus:w-full"
                                             aria-hidden="true"
                                         />
                                     </button>
@@ -94,15 +118,15 @@ function Header() {
                             ))}
                         </ul>
 
-                        {/* Burger Menu Button - Visible on mobile */}
+                        {/* Mobile menu toggle button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden p-2 text-gray-400 hover:text-[var(--color-ethereal-400)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-ethereal-400)] focus:ring-offset-2 focus:ring-offset-[var(--color-dark-bg)] rounded relative z-[60]"
+                            className="md:hidden p-2 text-gray-400 hover:text-ethereal-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg rounded relative z-60"
                             aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                             aria-expanded={mobileMenuOpen}
                             aria-controls="mobile-menu"
                         >
-                            {/* Burger Icon animé */}
+                            {/* Animated burger icon */}
                             <div className="w-6 h-5 flex flex-col justify-between">
                                 <span
                                     className={`block h-0.5 w-full bg-current transition-all duration-300 ${
@@ -125,18 +149,18 @@ function Header() {
                 </nav>
             </header>
 
-            {/* Mobile Menu - Séparé du header pour éviter les problèmes de positionnement */}
+            {/* Mobile menu overlay */}
             <div
                 id="mobile-menu"
-                className={`md:hidden fixed inset-0 z-40 bg-[var(--color-dark-bg)] transition-all duration-300 ${
+                className={`md:hidden fixed inset-0 z-40 bg-dark-bg transition-all duration-300 ${
                     mobileMenuOpen
                         ? 'opacity-100 pointer-events-auto'
                         : 'opacity-0 pointer-events-none'
                 }`}
                 aria-hidden={!mobileMenuOpen}
             >
-                {/* Espace pour le header */}
-                <div className="h-[57px] sm:h-[65px]" aria-hidden="true" />
+                {/* Header spacer */}
+                <div className="h-14.25 sm:h-16.25" aria-hidden="true"/>
 
                 <nav
                     className="container mx-auto px-4 py-8 h-[calc(100vh-57px)] sm:h-[calc(100vh-65px)] overflow-y-auto"
@@ -153,12 +177,12 @@ function Header() {
                                         : 'opacity-0 -translate-y-4'
                                 }`}
                                 style={{
-                                    transitionDelay: mobileMenuOpen ? `${index * 50}ms` : '0ms'
+                                    transitionDelay: mobileMenuOpen ? `${index * MOBILE_MENU_ANIMATION_DELAY}ms` : '0ms'
                                 }}
                             >
                                 <button
                                     onClick={() => scrollToSection(item.id)}
-                                    className="w-full text-left text-2xl font-medium text-gray-300 hover:text-[var(--color-ethereal-400)] transition-colors duration-200 py-3 px-4 rounded-lg hover:bg-[var(--color-dark-surface)]/50 focus:outline-none focus:bg-[var(--color-dark-surface)]/50 focus:text-[var(--color-ethereal-400)]"
+                                    className="w-full text-left text-2xl font-medium text-gray-300 hover:text-ethereal-400 transition-colors duration-200 py-3 px-4 rounded-lg hover:bg-dark-surface/50 focus:outline-none focus:bg-dark-surface/50 focus:text-ethereal-400"
                                     aria-label={item.ariaLabel}
                                 >
                                     {item.label}
@@ -167,10 +191,10 @@ function Header() {
                         ))}
                     </ul>
 
-                    {/* Ligne décorative */}
-                    <div className="mt-8 pt-8 border-t border-[var(--color-dark-border)]">
+                    {/* Footer */}
+                    <div className="mt-8 pt-8 border-t border-dark-border">
                         <p className="text-sm text-gray-500 text-center">
-                            Matteo Marquant — Portfolio 2024
+                            Matteo Marquant — Portfolio 2026
                         </p>
                     </div>
                 </nav>
