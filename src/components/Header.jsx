@@ -157,7 +157,7 @@ function Header() {
                         ? 'opacity-100 pointer-events-auto'
                         : 'opacity-0 pointer-events-none'
                 }`}
-                aria-hidden={!mobileMenuOpen}
+                inert={!mobileMenuOpen || undefined}
             >
                 {/* Header spacer */}
                 <div className="h-14.25 sm:h-16.25" aria-hidden="true"/>
@@ -184,6 +184,7 @@ function Header() {
                                     onClick={() => scrollToSection(item.id)}
                                     className="w-full text-left text-2xl font-medium text-gray-300 hover:text-ethereal-400 transition-colors duration-200 py-3 px-4 rounded-lg hover:bg-dark-surface/50 focus:outline-none focus:bg-dark-surface/50 focus:text-ethereal-400"
                                     aria-label={item.ariaLabel}
+                                    tabIndex={mobileMenuOpen ? 0 : -1}
                                 >
                                     {item.label}
                                 </button>
