@@ -203,8 +203,8 @@ function NebulaBackground() {
                     const dy = y - point.y
                     const dist = Math.sqrt(dx * dx + dy * dy)
 
-                    if (dist < 300) {
-                        const force = (1 - dist / 300) * point.life * 35
+                    if (dist < 180) {
+                        const force = (1 - dist / 180) * point.life * 12
                         const angle = Math.atan2(dy, dx)
                         x += Math.cos(angle) * force
                         y += Math.sin(angle) * force
