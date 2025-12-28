@@ -42,21 +42,21 @@ function Projects() {
             title: 'Jeu Godot',
             description: 'Un jeu d\'aventure développé avec le moteur Godot Engine. Exploration d\'un monde interactif avec des mécaniques de gameplay innovantes et une narration immersive.',
             tags: ['GDScript', 'Godot', 'Game Design'],
-            link: '#',
+            link: 'https://github.com/Enoxboo/Project-R',
             ariaLabel: 'Voir le projet Jeu Godot'
         },
         {
             title: 'Site Photographe Pro',
             description: 'Portfolio professionnel pour un photographe avec galerie dynamique, interface élégante et optimisée pour présenter des travaux photographiques de haute qualité.',
             tags: ['JavaScript', 'HTML', 'CSS'],
-            link: '#',
+            link: 'https://github.com/Enoxboo/sandysart-photo',
             ariaLabel: 'Voir le projet Site Photographe Pro'
         },
         {
             title: 'Jeu Python',
-            description: 'Jeu développé en Python avec une architecture modulaire. Expérimentation avec la logique de jeu, l\'intelligence artificielle et les algorithmes de pathfinding.',
-            tags: ['Python', 'Pygame', 'Algorithms'],
-            link: '#',
+            description: 'Jeu de survie basé sur des choix où vous devez gérer vos ressources pour survivre sur une île déserte pendant 20 jours. Gérez votre faim, votre hydratation et votre énergie en faisant des choix stratégiques tout en affrontant des événements aléatoires.',
+            tags: ['Python', 'Tkinter', 'Game Dev'],
+            link: 'https://github.com/Enoxboo/Sprout-Island',
             ariaLabel: 'Voir le projet Jeu Python'
         }
     ]
@@ -155,6 +155,8 @@ function Projects() {
                                         {/* Project link */}
                                         <a
                                             href={project.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="inline-flex items-center gap-2 text-sm sm:text-base text-ethereal-400 hover:text-ethereal-300 transition-colors duration-200 group/link focus:outline-none focus:ring-2 focus:ring-ethereal-400 rounded px-2 py-1 -mx-2"
                                             aria-label={project.ariaLabel}
                                         >
