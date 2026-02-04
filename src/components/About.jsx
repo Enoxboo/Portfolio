@@ -74,10 +74,11 @@ function About() {
         >
             <div className="container mx-auto max-w-7xl">
                 <div
-                    className={`max-w-4xl mx-auto transition-all duration-700 ease-out ${
+                    className={`max-w-6xl transition-all duration-700 ease-out ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}
                 >
+
                     {/* Section badge */}
                     <div
                         className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full"
@@ -94,34 +95,32 @@ function About() {
                         id="about-heading"
                         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 lg:mb-10 text-white leading-[1.1] tracking-tight"
                     >
-                        Créer des expériences{' '}
-                        <span className="text-ethereal-400 inline-block">numériques</span>
+                        Comprendre avant{' '}
+                        <span className="text-ethereal-400 inline-block">d’optimiser</span>
                     </h2>
 
                     {/* Description */}
-                    <div
-                        className="space-y-5 sm:space-y-6 text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
+                    <div className="space-y-5 sm:space-y-6 text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
                         <p>
                             Étudiant en{' '}
-                            <span className="text-ethereal-400 font-semibold">B2 Informatique</span>,
-                            je suis passionné par le développement logiciel et la création d'expériences interactives
-                            qui allient technologie et créativité.
+                            <span className="text-ethereal-400 font-semibold">informatique</span>{' '}
+                            et développeur en formation, ce qui me motive le plus dans le code n’est
+                            pas seulement de faire fonctionner quelque chose, mais de{' '}
+                            <span className="text-white font-semibold">comprendre pourquoi ça fonctionne</span>.
                         </p>
 
                         <p>
-                            Mon parcours m'a permis d'explorer différents domaines : du développement de jeux vidéo
-                            avec{' '}
-                            <span className="text-white font-semibold">Godot</span>
-                            {' '}et{' '}
-                            <span className="text-white font-semibold">Python</span>,
-                            à la création de sites web modernes et performants avec des technologies comme React et
-                            Tailwind.
+                            J’ai travaillé sur des projets variés, notamment des jeux vidéo avec{' '}
+                            <span className="text-white font-semibold">Godot</span>, ainsi que des
+                            applications web. J’aime partir d’idées simples et les pousser jusqu’à
+                            un résultat fini, même imparfait.
                         </p>
 
                         <p>
-                            Je m'intéresse particulièrement à l'architecture logicielle, aux interfaces utilisateur
-                            intuitives et à l'optimisation des performances. Chaque projet est pour moi une opportunité
-                            d'apprendre, d'innover et de repousser mes limites techniques.
+                            J’apprends principalement par l’expérimentation : tester, casser,
+                            recommencer, documenter. Les zones floues et les bugs difficiles à
+                            comprendre sont ce qui me frustre le plus, mais aussi ce qui me fait
+                            le plus progresser.
                         </p>
                     </div>
 
