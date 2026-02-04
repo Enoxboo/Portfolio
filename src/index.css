@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ============================================
+   CUSTOM CSS VARIABLES & THEME
+   ============================================ */
 @theme {
     --color-ethereal-50: #faf5ff;
     --color-ethereal-100: #f3e8ff;
@@ -12,10 +15,126 @@
     --color-ethereal-800: #6b21a8;
     --color-ethereal-900: #581c87;
 
+    /* Dark theme colors */
     --color-dark-bg: #0a0a0f;
     --color-dark-surface: #131318;
     --color-dark-border: #1f1f29;
 }
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-dark-border);
+    border-radius: 6px;
+    border: 2px solid var(--color-dark-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ethereal-600);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-dark-border) var(--color-dark-bg);
+}
+
+/* ============================================
+   TEXT SELECTION
+   ============================================ */
+
+::selection {
+    background: var(--color-ethereal-600);
+    color: white;
+}
+
+::-moz-selection {
+    background: var(--color-ethereal-600);
+    color: white;
+}
+
+/* ============================================
+   FOCUS STYLES
+   ============================================ */
+
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--color-ethereal-400);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   ACCESSIBILITY - SCREEN READER ONLY
+   ============================================ */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only:focus,
+.focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* ============================================
+   CUSTOM ANIMATIONS
+   ============================================ */
 
 @keyframes fadeInUp {
     from {
@@ -28,105 +147,181 @@
     }
 }
 
-/* Scroll fluide */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Scrollbar personnalisée */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--color-dark-bg);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--color-dark-border);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-ethereal-600);
-}
-
-::selection {
-    background: var(--color-ethereal-600);
-    color: white;
-}
-
-@media (max-width: 768px) {
-    html {
-        font-size: 14px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
 
-/* Animations nébuleuse */
-@keyframes nebula-slow {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.15;
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
     }
-    33% {
-        transform: translate(30px, -30px) scale(1.1);
-        opacity: 0.25;
-    }
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-        opacity: 0.2;
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
-@keyframes nebula-reverse {
-    0%, 100% {
-        transform: translate(0, 0) scale(1) rotate(0deg);
-        opacity: 0.2;
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
     }
-    33% {
-        transform: translate(-30px, 30px) scale(0.9) rotate(5deg);
-        opacity: 0.15;
-    }
-    66% {
-        transform: translate(20px, -20px) scale(1.1) rotate(-5deg);
-        opacity: 0.25;
-    }
-}
-
-@keyframes glow-pulse {
-    0%, 100% {
+    to {
+        opacity: 1;
         transform: scale(1);
-        opacity: 0.1;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.2;
     }
 }
 
-@keyframes twinkle {
+@keyframes pulse-slow {
     0%, 100% {
-        opacity: 0.2;
-        transform: scale(1);
+        opacity: 0.8;
     }
     50% {
         opacity: 1;
-        transform: scale(1.5);
     }
 }
 
-.animate-nebula-slow {
-    animation: nebula-slow 20s ease-in-out infinite;
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(147, 51, 234, 0.6);
+    }
 }
 
-.animate-nebula-reverse {
-    animation: nebula-reverse 25s ease-in-out infinite;
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
 }
 
-.animate-glow-pulse {
-    animation: glow-pulse 6s ease-in-out infinite;
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
 }
 
-.animate-twinkle {
-    animation: twinkle 3s ease-in-out infinite;
+.animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s ease-out;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 640px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 1920px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    header,
+    footer,
+    button,
+    .no-print {
+        display: none !important;
+    }
+
+    * {
+        background: white !important;
+        color: black !important;
+    }
+
+    a[href]::after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+img,
+video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.gradient-text {
+    background: linear-gradient(to right, var(--color-ethereal-300), var(--color-ethereal-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glass {
+    background: rgba(19, 19, 24, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hover-lift {
+    transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+}
+
+.container-custom {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container-custom {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-custom {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 }

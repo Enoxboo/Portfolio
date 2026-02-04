@@ -1,66 +1,168 @@
-import {useEffect, useRef, useState} from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * Contact component - Contact form and social links section
  * Features:
- * - Intersection Observer for scroll animation
- * - Form validation and submission via Formspree
- * - Success/error status feedback
- * - Social media links with hover effects
- * - Accessibility features (ARIA labels, keyboard navigation)
+ * - Intersection Observer for scroll animation with reduced motion support
+ * - Enhanced form validation with real-time feedback
+ * - Form submission via Formspree with improved error handling
+ * - Success/error status feedback with auto-dismiss
+ * - Social media links with improved hover effects
+ * - Full accessibility (ARIA labels, keyboard navigation, screen reader support)
  */
 function Contact() {
-    // Constants
-    const INTERSECTION_THRESHOLD = 0.2
-    const ANIMATION_DURATION = 1000
+    const INTERSECTION_THRESHOLD = 0.1
+    const INTERSECTION_ROOT_MARGIN = '0px 0px -10% 0px'
     const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mqezovvr'
+    const STATUS_AUTO_DISMISS_DELAY = 5000
 
-    // State
     const [isVisible, setIsVisible] = useState(false)
     const [formState, setFormState] = useState({
         name: '',
         email: '',
         message: ''
     })
+    const [formErrors, setFormErrors] = useState({})
+    const [touched, setTouched] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState(null)
     const sectionRef = useRef(null)
+    const statusTimeoutRef = useRef(null)
 
-    // Handle scroll-triggered animation
     useEffect(() => {
+        const currentRef = sectionRef.current
+        if (!currentRef) return
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        if (prefersReducedMotion) {
+            setIsVisible(true)
+            return
+        }
+
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
+                if (entry.isIntersecting && !isVisible) {
                     setIsVisible(true)
                 }
             },
-            {threshold: INTERSECTION_THRESHOLD}
+            {
+                threshold: INTERSECTION_THRESHOLD,
+                rootMargin: INTERSECTION_ROOT_MARGIN
+            }
         )
 
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current)
+        observer.observe(currentRef)
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef)
+            }
+            observer.disconnect()
+        }
+    }, [isVisible])
+
+    useEffect(() => {
+        if (submitStatus) {
+            statusTimeoutRef.current = setTimeout(() => {
+                setSubmitStatus(null)
+            }, STATUS_AUTO_DISMISS_DELAY)
         }
 
-        return () => observer.disconnect()
-    }, [])
+        return () => {
+            if (statusTimeoutRef.current) {
+                clearTimeout(statusTimeoutRef.current)
+            }
+        }
+    }, [submitStatus])
 
     /**
-     * Handle form input changes
-     * @param {Event} e - Input change event
+     * Validate form field
+     * @param {string} name - Field name
+     * @param {string} value - Field value
+     * @returns {string|null} Error message or null
      */
-    const handleChange = (e) => {
-        setFormState({
-            ...formState,
-            [e.target.name]: e.target.value
-        })
+    const validateField = (name, value) => {
+        switch (name) {
+            case 'name':
+                if (!value.trim()) return 'Le nom est requis'
+                if (value.trim().length < 2) return 'Le nom doit contenir au moins 2 caractères'
+                return null
+            case 'email':
+                { if (!value.trim()) return "L'email est requis"
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                if (!emailRegex.test(value)) return "L'email n'est pas valide"
+                return null }
+            case 'message':
+                if (!value.trim()) return 'Le message est requis'
+                if (value.trim().length < 10) return 'Le message doit contenir au moins 10 caractères'
+                return null
+            default:
+                return null
+        }
     }
 
     /**
-     * Handle form submission
+     * Handle form input changes with validation
+     * @param {Event} e - Input change event
+     */
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setFormState(prev => ({
+            ...prev,
+            [name]: value
+        }))
+
+        if (touched[name]) {
+            const error = validateField(name, value)
+            setFormErrors(prev => ({
+                ...prev,
+                [name]: error
+            }))
+        }
+    }
+
+    /**
+     * Handle field blur for validation
+     * @param {Event} e - Blur event
+     */
+    const handleBlur = (e) => {
+        const { name, value } = e.target
+        setTouched(prev => ({
+            ...prev,
+            [name]: true
+        }))
+
+        const error = validateField(name, value)
+        setFormErrors(prev => ({
+            ...prev,
+            [name]: error
+        }))
+    }
+
+    /**
+     * Handle form submission with validation
      * @param {Event} e - Form submit event
      */
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        const errors = {}
+        Object.keys(formState).forEach(key => {
+            const error = validateField(key, formState[key])
+            if (error) errors[key] = error
+        })
+
+        setFormErrors(errors)
+        setTouched({
+            name: true,
+            email: true,
+            message: true
+        })
+
+        if (Object.keys(errors).length > 0) {
+            return
+        }
+
         setIsSubmitting(true)
         setSubmitStatus(null)
 
@@ -75,24 +177,24 @@ function Contact() {
 
             if (response.ok) {
                 setSubmitStatus('success')
-                setFormState({name: '', email: '', message: ''})
+                setFormState({ name: '', email: '', message: '' })
+                setFormErrors({})
+                setTouched({})
             } else {
                 setSubmitStatus('error')
             }
         } catch (error) {
             console.error('Erreur lors de l\'envoi du formulaire:', error)
             setSubmitStatus('error')
-
         } finally {
             setIsSubmitting(false)
         }
     }
 
-    // Social links configuration
     const socialLinks = [
         {
             name: 'GitHub',
-            url: 'https://github.com/yourusername',
+            url: 'https://github.com/Enoxboo',
             icon: (
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path fillRule="evenodd"
@@ -103,7 +205,7 @@ function Contact() {
         },
         {
             name: 'LinkedIn',
-            url: 'https://linkedin.com/in/yourprofile',
+            url: 'https://linkedin.com/in/matteo-marquant-67469a266/',
             icon: (
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -117,20 +219,22 @@ function Contact() {
         <section
             id="contact"
             ref={sectionRef}
-            className="min-h-screen flex items-center py-16 sm:py-20 px-4 sm:px-6"
+            className="min-h-screen flex items-center py-20 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
             aria-labelledby="contact-heading"
         >
-            <div className="container mx-auto">
-                <div className={`max-w-4xl mx-auto transition-all duration-${ANIMATION_DURATION} ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}>
+            <div className="container mx-auto max-w-7xl">
+                <div
+                    className={`max-w-6xl mx-auto transition-all duration-700 ease-out ${
+                        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    }`}
+                >
                     {/* Section badge */}
                     <div
-                        className="inline-block mb-3 sm:mb-4 px-3 sm:px-4 py-1.5 sm:py-2 bg-dark-surface border border-dark-border rounded-full"
+                        className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full"
                         role="status"
-                        aria-label="Section actuelle"
+                        aria-live="polite"
                     >
-                        <span className="text-xs sm:text-sm text-ethereal-400">
+                        <span className="text-sm sm:text-base text-ethereal-400 font-medium">
                             Contact
                         </span>
                     </div>
@@ -138,33 +242,34 @@ function Contact() {
                     {/* Heading */}
                     <h2
                         id="contact-heading"
-                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-white leading-tight"
+                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 text-white leading-[1.1] tracking-tight"
                     >
-                        Travaillons
-                        <span className="text-ethereal-400"> ensemble</span>
+                        Travaillons{' '}
+                        <span className="text-ethereal-400 inline-block">ensemble</span>
                     </h2>
 
                     {/* Description */}
-                    <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-12 max-w-2xl leading-relaxed">
+                    <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-12 sm:mb-16 lg:mb-20 max-w-2xl leading-relaxed">
                         Un projet en tête ? Une question ? N'hésitez pas à me contacter.
-                        Je serai ravi d'échanger avec vous.
+                        Je serai ravi d'échanger avec vous sur vos idées et besoins.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20">
                         {/* Contact form */}
                         <div>
                             <form
                                 onSubmit={handleSubmit}
-                                className="space-y-4 sm:space-y-6"
+                                className="space-y-6"
                                 noValidate
+                                aria-label="Formulaire de contact"
                             >
                                 {/* Name input */}
                                 <div>
                                     <label
                                         htmlFor="name"
-                                        className="block text-sm font-medium text-gray-400 mb-2"
+                                        className="block text-sm font-semibold text-gray-300 mb-2"
                                     >
-                                        Nom
+                                        Nom <span className="text-red-400">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -172,20 +277,39 @@ function Contact() {
                                         name="name"
                                         value={formState.name}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
                                         required
-                                        className="w-full px-4 py-3 bg-dark-surface border border-dark-border rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-ethereal-600 focus:ring-2 focus:ring-ethereal-600/20 transition-colors duration-200"
-                                        placeholder="Votre nom"
+                                        className={`w-full px-4 py-3.5 bg-dark-surface border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 ${
+                                            formErrors.name && touched.name
+                                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                                : 'border-dark-border focus:border-ethereal-600 focus:ring-ethereal-600/20'
+                                        }`}
+                                        placeholder="Votre nom complet"
                                         aria-required="true"
+                                        aria-invalid={!!(formErrors.name && touched.name)}
+                                        aria-describedby={formErrors.name && touched.name ? 'name-error' : undefined}
                                     />
+                                    {formErrors.name && touched.name && (
+                                        <p
+                                            id="name-error"
+                                            className="mt-2 text-sm text-red-400 flex items-center gap-1"
+                                            role="alert"
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                            {formErrors.name}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Email input */}
                                 <div>
                                     <label
                                         htmlFor="email"
-                                        className="block text-sm font-medium text-gray-400 mb-2"
+                                        className="block text-sm font-semibold text-gray-300 mb-2"
                                     >
-                                        Email
+                                        Email <span className="text-red-400">*</span>
                                     </label>
                                     <input
                                         type="email"
@@ -193,67 +317,127 @@ function Contact() {
                                         name="email"
                                         value={formState.email}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
                                         required
-                                        className="w-full px-4 py-3 bg-dark-surface border border-dark-border rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-ethereal-600 focus:ring-2 focus:ring-ethereal-600/20 transition-colors duration-200"
+                                        className={`w-full px-4 py-3.5 bg-dark-surface border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 ${
+                                            formErrors.email && touched.email
+                                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                                : 'border-dark-border focus:border-ethereal-600 focus:ring-ethereal-600/20'
+                                        }`}
                                         placeholder="votre@email.com"
                                         aria-required="true"
+                                        aria-invalid={!!(formErrors.email && touched.email)}
+                                        aria-describedby={formErrors.email && touched.email ? 'email-error' : undefined}
                                     />
+                                    {formErrors.email && touched.email && (
+                                        <p
+                                            id="email-error"
+                                            className="mt-2 text-sm text-red-400 flex items-center gap-1"
+                                            role="alert"
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                            {formErrors.email}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Message textarea */}
                                 <div>
                                     <label
                                         htmlFor="message"
-                                        className="block text-sm font-medium text-gray-400 mb-2"
+                                        className="block text-sm font-semibold text-gray-300 mb-2"
                                     >
-                                        Message
+                                        Message <span className="text-red-400">*</span>
                                     </label>
                                     <textarea
                                         id="message"
                                         name="message"
                                         value={formState.message}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
                                         required
                                         rows="5"
-                                        className="w-full px-4 py-3 bg-dark-surface border border-dark-border rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-ethereal-600 focus:ring-2 focus:ring-ethereal-600/20 transition-colors duration-200 resize-none"
-                                        placeholder="Votre message..."
+                                        className={`w-full px-4 py-3.5 bg-dark-surface border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
+                                            formErrors.message && touched.message
+                                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                                : 'border-dark-border focus:border-ethereal-600 focus:ring-ethereal-600/20'
+                                        }`}
+                                        placeholder="Parlez-moi de votre projet..."
                                         aria-required="true"
+                                        aria-invalid={!!(formErrors.message && touched.message)}
+                                        aria-describedby={formErrors.message && touched.message ? 'message-error' : undefined}
                                     />
+                                    {formErrors.message && touched.message && (
+                                        <p
+                                            id="message-error"
+                                            className="mt-2 text-sm text-red-400 flex items-center gap-1"
+                                            role="alert"
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                            {formErrors.message}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Submit button */}
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full px-6 sm:px-8 py-3 sm:py-4 bg-ethereal-600 hover:bg-ethereal-500 rounded-lg transition-all duration-200 font-medium text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg"
+                                    className="w-full px-8 py-4 bg-ethereal-600 hover:bg-ethereal-500 active:bg-ethereal-700 rounded-lg transition-all duration-200 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg shadow-lg shadow-ethereal-600/20 hover:shadow-ethereal-500/30"
                                     aria-label={isSubmitting ? 'Envoi en cours' : 'Envoyer le message'}
                                 >
-                                    {isSubmitting ? 'Envoi en cours...' : 'Envoyer le message'}
+                                    {isSubmitting ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Envoi en cours...
+                                        </span>
+                                    ) : (
+                                        'Envoyer le message'
+                                    )}
                                 </button>
 
                                 {/* Success message */}
                                 {submitStatus === 'success' && (
                                     <div
-                                        className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg"
+                                        className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg backdrop-blur-sm"
                                         role="alert"
                                         aria-live="polite"
                                     >
-                                        <p className="text-green-400 text-sm">
-                                            ✓ Message envoyé avec succès !
-                                        </p>
+                                        <div className="flex items-start gap-3">
+                                            <svg className="w-5 h-5 text-green-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                            </svg>
+                                            <div>
+                                                <p className="text-green-400 font-medium">Message envoyé avec succès !</p>
+                                                <p className="text-green-300/80 text-sm mt-1">Je vous répondrai dans les plus brefs délais.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
 
                                 {/* Error message */}
                                 {submitStatus === 'error' && (
                                     <div
-                                        className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+                                        className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm"
                                         role="alert"
                                         aria-live="polite"
                                     >
-                                        <p className="text-red-400 text-sm">
-                                            ✗ Une erreur est survenue. Réessayez.
-                                        </p>
+                                        <div className="flex items-start gap-3">
+                                            <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                            </svg>
+                                            <div>
+                                                <p className="text-red-400 font-medium">Une erreur est survenue</p>
+                                                <p className="text-red-300/80 text-sm mt-1">Veuillez réessayer ou me contacter directement via mes réseaux sociaux.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </form>
@@ -261,7 +445,7 @@ function Contact() {
 
                         {/* Social links */}
                         <div className="flex flex-col justify-center">
-                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">
+                            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">
                                 Retrouvez-moi
                             </h3>
 
@@ -275,19 +459,17 @@ function Contact() {
                                         href={link.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="group flex items-center gap-4 p-4 bg-dark-surface border border-dark-border rounded-lg hover:border-ethereal-600 transition-all duration-200 focus:outline-none focus:border-ethereal-600 focus:ring-2 focus:ring-ethereal-600/20"
-                                        aria-label={`Visiter mon profil ${link.name}`}
+                                        className="group flex items-center gap-4 p-5 bg-dark-surface/50 backdrop-blur-sm border border-dark-border rounded-xl hover:border-ethereal-600 hover:bg-dark-surface/80 transition-all duration-200 focus:outline-none focus:border-ethereal-600 focus:ring-2 focus:ring-ethereal-600/20 hover:-translate-y-0.5"
+                                        aria-label={`Visiter mon profil ${link.name} (ouvre dans un nouvel onglet)`}
                                     >
-                                        <div
-                                            className="text-gray-400 group-hover:text-ethereal-400 transition-colors duration-200">
+                                        <div className="text-gray-400 group-hover:text-ethereal-400 transition-colors duration-200">
                                             {link.icon}
                                         </div>
-                                        <span
-                                            className="text-sm sm:text-base text-white font-medium group-hover:text-ethereal-400 transition-colors duration-200">
+                                        <span className="text-base sm:text-lg text-white font-semibold group-hover:text-ethereal-400 transition-colors duration-200">
                                             {link.name}
                                         </span>
                                         <span
-                                            className="ml-auto text-gray-600 transform group-hover:translate-x-1 transition-transform duration-200"
+                                            className="ml-auto text-gray-500 transform group-hover:translate-x-1 group-hover:text-ethereal-400 transition-all duration-200"
                                             aria-hidden="true"
                                         >
                                             →
@@ -297,10 +479,16 @@ function Contact() {
                             </nav>
 
                             {/* Location info */}
-                            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-dark-border">
-                                <p className="text-xs sm:text-sm text-gray-500">
-                                    Basé à Toulouse, France 🇫🇷
-                                </p>
+                            <div className="mt-8 pt-8 border-t border-dark-border/50">
+                                <div className="flex items-center gap-2 text-gray-400">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <p className="text-sm sm:text-base">
+                                        Basé à <span className="text-white font-medium">Toulouse, France</span> 🇫🇷
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
