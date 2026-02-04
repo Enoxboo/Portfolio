@@ -20,9 +20,9 @@ function Hero() {
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
 
     const phrases = [
-        "De la création de jeux à l'architecture web.",
-        "Passionné par l'innovation et la performance.",
-        "Transformant des idées en solutions concrètes."
+        "Explorer, comprendre, recommencer.",
+        "Du code, des systèmes, des erreurs et des progrès.",
+        "Apprendre en construisant des jeux."
     ]
 
     useEffect(() => {
@@ -107,7 +107,7 @@ function Hero() {
                         aria-live="polite"
                     >
                         <span className="text-sm sm:text-base text-ethereal-400 font-semibold tracking-wide">
-                            👨‍💻 Développeur Full Stack
+                            👨‍💻 Développeur en formation, orienté systèmes & création
                         </span>
                     </div>
 

@@ -53,20 +53,12 @@ function Skills() {
 
     const skills = [
         {
-            name: 'JavaScript',
-            category: 'Full Stack',
-            icon: '⚡',
-            color: 'from-yellow-400 to-yellow-600',
+            name: 'GDScript',
+            category: 'Game Dev',
+            icon: '🎮',
+            color: 'from-indigo-500 to-purple-600',
             level: 'Avancé',
-            description: 'ES6+, Async/Await, DOM'
-        },
-        {
-            name: 'React',
-            category: 'Frontend',
-            icon: '⚛️',
-            color: 'from-cyan-400 to-blue-600',
-            level: 'Avancé',
-            description: 'Hooks, Context, Performance'
+            description: 'Godot Engine, Scenes, Signals'
         },
         {
             name: 'Python',
@@ -77,60 +69,12 @@ function Skills() {
             description: 'OOP, Data structures, Tkinter'
         },
         {
-            name: 'GDScript',
-            category: 'Game Dev',
-            icon: '🎮',
-            color: 'from-indigo-500 to-purple-600',
-            level: 'Intermédiaire',
-            description: 'Godot Engine, Scenes, Signals'
-        },
-        {
-            name: 'HTML5',
-            category: 'Frontend',
-            icon: '🌐',
-            color: 'from-orange-500 to-red-600',
-            level: 'Expert',
-            description: 'Sémantique, Accessibilité'
-        },
-        {
-            name: 'CSS3',
-            category: 'Frontend',
-            icon: '🎨',
-            color: 'from-pink-500 to-rose-600',
-            level: 'Avancé',
-            description: 'Flexbox, Grid, Animations'
-        },
-        {
             name: 'Tailwind',
             category: 'Frontend',
             icon: '💨',
             color: 'from-teal-400 to-cyan-600',
             level: 'Avancé',
             description: 'Utility-first, Responsive, Custom'
-        },
-        {
-            name: 'C++',
-            category: 'Systems',
-            icon: '⚙️',
-            color: 'from-slate-500 to-blue-700',
-            level: 'Intermédiaire',
-            description: 'POO, Pointeurs, STL'
-        },
-        {
-            name: 'Go',
-            category: 'Backend',
-            icon: '🔷',
-            color: 'from-cyan-600 to-blue-700',
-            level: 'Débutant',
-            description: 'Concurrency, API REST'
-        },
-        {
-            name: 'Java',
-            category: 'Backend',
-            icon: '☕',
-            color: 'from-red-600 to-orange-700',
-            level: 'Intermédiaire',
-            description: 'OOP, Spring basics'
         },
         {
             name: 'Git',
@@ -141,11 +85,67 @@ function Skills() {
             description: 'Versionning, Branches, Workflow'
         },
         {
+            name: 'HTML5',
+            category: 'Frontend',
+            icon: '🌐',
+            color: 'from-orange-500 to-red-600',
+            level: 'Avancé',
+            description: 'Sémantique, Accessibilité'
+        },
+        {
+            name: 'JavaScript',
+            category: 'Full Stack',
+            icon: '⚡',
+            color: 'from-yellow-400 to-yellow-600',
+            level: 'Intermédiaire',
+            description: 'ES6+, Async/Await, DOM'
+        },
+        {
+            name: 'React',
+            category: 'Frontend',
+            icon: '⚛️',
+            color: 'from-cyan-400 to-blue-600',
+            level: 'Intermédiaire',
+            description: 'Hooks, Context, Performance'
+        },
+        {
+            name: 'CSS3',
+            category: 'Frontend',
+            icon: '🎨',
+            color: 'from-pink-500 to-rose-600',
+            level: 'Intermédiaire',
+            description: 'Flexbox, Grid, Animations'
+        },
+        {
+            name: 'C++',
+            category: 'Systems',
+            icon: '⚙️',
+            color: 'from-slate-500 to-blue-700',
+            level: 'Intermédiaire',
+            description: 'POO, Pointeurs, STL'
+        },
+        {
+            name: 'Java',
+            category: 'Backend',
+            icon: '☕',
+            color: 'from-red-600 to-orange-700',
+            level: 'Intermédiaire',
+            description: 'OOP, Spring basics'
+        },
+        {
+            name: 'Go',
+            category: 'Backend',
+            icon: '🔷',
+            color: 'from-cyan-600 to-blue-700',
+            level: 'Débutant',
+            description: 'Concurrency, API REST'
+        },
+        {
             name: 'SQL',
             category: 'Database',
             icon: '🗄️',
             color: 'from-emerald-500 to-teal-700',
-            level: 'Intermédiaire',
+            level: 'Débutant',
             description: 'Queries, Joins, Optimization'
         }
     ]
