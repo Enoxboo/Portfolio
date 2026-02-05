@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState, memo} from 'react'
 
 /**
  * About component - Personal introduction section
@@ -162,4 +162,4 @@ function About() {
     )
 }
 
-export default About
+export default memo(About)

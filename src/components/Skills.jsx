@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState, memo} from 'react'
 
 /**
  * Skills component - Technical skills showcase section
@@ -225,7 +225,7 @@ function Skills() {
                                     >
                                         {/* Gradient overlay on hover */}
                                         <div
-                                            className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${skill.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`}
+                                            className={`absolute inset-0 rounded-2xl bg-linear-to-br ${skill.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`}
                                             aria-hidden="true"
                                         />
 
@@ -293,7 +293,7 @@ function Skills() {
 
                                         {/* Bottom accent gradient */}
                                         <div
-                                            className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${skill.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl`}
+                                            className={`absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r ${skill.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl`}
                                             aria-hidden="true"
                                         />
                                     </div>
@@ -365,4 +365,4 @@ function Skills() {
     )
 }
 
-export default Skills
+export default memo(Skills)

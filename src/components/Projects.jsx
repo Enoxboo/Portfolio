@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState, memo} from 'react'
 
 /**
  * Projects component - Portfolio projects showcase section
@@ -141,7 +141,7 @@ function Projects() {
 
                                     {/* Gradient overlay on hover */}
                                     <div
-                                        className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}
+                                        className={`absolute inset-0 bg-linear-to-br ${project.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}
                                         aria-hidden="true"
                                     />
 
@@ -211,7 +211,7 @@ function Projects() {
 
                                     {/* Bottom accent line */}
                                     <div
-                                        className={`h-1 bg-gradient-to-r ${project.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}
+                                        className={`h-1 bg-linear-to-r ${project.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}
                                         aria-hidden="true"
                                     />
                                 </div>
@@ -255,4 +255,4 @@ function Projects() {
     )
 }
 
-export default Projects
+export default memo(Projects)
