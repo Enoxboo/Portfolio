@@ -113,7 +113,7 @@ function Hero() {
 
                     {/* Name heading with gradient */}
                     <h1
-                        className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-6 sm:mb-8 bg-gradient-to-r from-ethereal-300 via-ethereal-400 to-ethereal-500 bg-clip-text text-transparent leading-[1.1] tracking-tight transition-all duration-700 delay-200 ${
+                        className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-6 sm:mb-8 bg-linear-to-r from-ethereal-300 via-ethereal-400 to-ethereal-500 bg-clip-text text-transparent leading-[1.1] tracking-tight transition-all duration-700 delay-200 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}
                     >
@@ -131,7 +131,7 @@ function Hero() {
 
                     {/* Typing effect description */}
                     <div
-                        className={`text-base sm:text-lg md:text-xl text-gray-400 mb-10 sm:mb-12 lg:mb-16 leading-relaxed min-h-[3.5rem] sm:min-h-[4rem] transition-all duration-700 delay-400 ${
+                        className={`text-base sm:text-lg md:text-xl text-gray-400 mb-10 sm:mb-12 lg:mb-16 leading-relaxed min-h-14 sm:min-h-16 transition-all duration-700 delay-400 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}
                         aria-live="polite"
@@ -155,7 +155,7 @@ function Hero() {
                             aria-label="Voir mes projets"
                         >
                             {/* Gradient overlay on hover */}
-                            <span className="absolute inset-0 bg-gradient-to-r from-ethereal-500 to-ethereal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+                            <span className="absolute inset-0 bg-linear-to-r from-ethereal-500 to-ethereal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
 
                             <span className="relative font-semibold text-base sm:text-lg text-white">
                                 Voir mes projets
