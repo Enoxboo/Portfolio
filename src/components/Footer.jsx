@@ -129,7 +129,7 @@ function Footer() {
                             </svg>
                         </a>
                         <a
-                            href="linkedin.com/in/matteo-marquant-67469a266/"
+                            href="https://linkedin.com/in/matteo-marquant-67469a266/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-2.5 text-gray-400 hover:text-ethereal-400 hover:bg-dark-surface/50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg"
