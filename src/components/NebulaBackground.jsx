@@ -11,6 +11,7 @@ function NebulaBackground() {
         const ctx = canvas.getContext('2d', { alpha: false })
         let animationFrameId
         let time = 0
+        let isActive = true
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth
@@ -19,7 +20,6 @@ function NebulaBackground() {
         resizeCanvas()
         window.addEventListener('resize', resizeCanvas)
 
-        // Gestion de la souris - tracé invisible
         const handleMouseMove = (e) => {
             trailRef.current.push({
                 x: e.clientX,
@@ -35,7 +35,6 @@ function NebulaBackground() {
 
         window.addEventListener('mousemove', handleMouseMove)
 
-        // Étoiles
         class Star {
             constructor() {
                 this.reset()
@@ -62,11 +61,9 @@ function NebulaBackground() {
                     this.size = this.baseSize * (0.8 + Math.sin(time * this.twinkleSpeed * 2) * 0.4)
                 }
 
-                // Réinitialiser la position
                 this.x = this.baseX
                 this.y = this.baseY
 
-                // Appliquer l'influence du tracé invisible
                 trailRef.current.forEach(point => {
                     const dx = this.x - point.x
                     const dy = this.y - point.y
@@ -197,7 +194,6 @@ function NebulaBackground() {
                 let x = baseX
                 let y = baseY
 
-                // Déformation invisible mais présente
                 trailRef.current.forEach(point => {
                     const dx = x - point.x
                     const dy = y - point.y
@@ -226,8 +222,9 @@ function NebulaBackground() {
             })
         }
 
-        // Animation principale
         const animate = () => {
+            if (!isActive) return
+
             time++
 
             ctx.fillStyle = '#0a0a14'
@@ -242,7 +239,6 @@ function NebulaBackground() {
                 star.draw()
             })
 
-            // Mettre à jour le tracé (invisible)
             trailRef.current = trailRef.current.filter(point => {
                 point.life -= 0.015
                 return point.life > 0
@@ -252,6 +248,12 @@ function NebulaBackground() {
         }
 
         animate()
+
+        const handleVisibilityChange = () => {
+            isActive = !document.hidden
+            if (isActive) animate()
+        }
+        document.addEventListener('visibilitychange', handleVisibilityChange)
 
         return () => {
             cancelAnimationFrame(animationFrameId)
