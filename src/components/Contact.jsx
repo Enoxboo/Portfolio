@@ -202,7 +202,7 @@ function Contact() {
         },
         {
             name: 'LinkedIn',
-            url: 'https://linkedin.com/in/matteo-marquant-67469a266/',
+            url: 'https://www.linkedin.com/in/matteo-marquant-67469a266/',
             icon: (
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -256,6 +256,15 @@ function Contact() {
                                 noValidate
                                 aria-label="Formulaire de contact"
                             >
+                                {/* Honeypot field — hidden from users, catches bots (Formspree native support) */}
+                                <input
+                                    type="text"
+                                    name="_gotcha"
+                                    style={{ display: 'none' }}
+                                    tabIndex={-1}
+                                    autoComplete="off"
+                                    aria-hidden="true"
+                                />
                                 {/* Name input */}
                                 <div>
                                     <label
