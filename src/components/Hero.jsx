@@ -1,94 +1,74 @@
 import { useEffect, useState, useCallback } from 'react'
+import { useScrollToSection } from '../hooks/useScrollToSection'
 
-/**
- * Hero component - Main landing section
- * Features:
- * - Staggered fade-in animation on mount with reduced motion support
- * - Responsive text sizing with optimal readability
- * - CTA buttons with smooth scroll and enhanced interactions
- * - Scroll indicator for better UX
- * - Full accessibility (ARIA labels, focus states, semantic HTML)
- * - Performance optimizations
- */
+const ANIMATION_DELAY = 100
+const TYPING_SPEED = 80
+const ERASE_SPEED = 40
+const TYPING_PAUSE = 2000
+
+const phrases = [
+    "Explorer, comprendre, recommencer.",
+    "Du code, des systèmes, des erreurs et des progrès.",
+    "Apprendre en construisant des jeux."
+]
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 function Hero() {
-    const ANIMATION_DELAY = 100
-    const TYPING_SPEED = 100
-    const TYPING_PAUSE = 2000
-
-    const [isVisible, setIsVisible] = useState(false)
-    const [typedText, setTypedText] = useState('')
-    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
-
-    const phrases = [
-        "Explorer, comprendre, recommencer.",
-        "Du code, des systèmes, des erreurs et des progrès.",
-        "Apprendre en construisant des jeux."
-    ]
+    const [isVisible, setIsVisible] = useState(prefersReducedMotion)
+    const [typedText, setTypedText] = useState(prefersReducedMotion ? phrases[0] : '')
+    const [phraseIndex, setPhraseIndex] = useState(0)
+    const [isErasing, setIsErasing] = useState(false)
 
     useEffect(() => {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-        if (prefersReducedMotion) {
-            setIsVisible(true)
-            setTypedText(phrases[0])
-        } else {
-            const timer = setTimeout(() => setIsVisible(true), ANIMATION_DELAY)
-            return () => clearTimeout(timer)
-        }
+        if (prefersReducedMotion) return
+        const timer = setTimeout(() => setIsVisible(true), ANIMATION_DELAY)
+        return () => clearTimeout(timer)
     }, [])
 
     useEffect(() => {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (prefersReducedMotion) return
 
-        let currentIndex = 0
-        const currentPhrase = phrases[currentPhraseIndex]
+        const currentPhrase = phrases[phraseIndex]
 
-        const typingInterval = setInterval(() => {
-            if (currentIndex <= currentPhrase.length) {
-                setTypedText(currentPhrase.slice(0, currentIndex))
-                currentIndex++
-            } else {
-                clearInterval(typingInterval)
-
-                setTimeout(() => {
-                    setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length)
-                }, TYPING_PAUSE)
+        if (!isErasing) {
+            if (typedText.length < currentPhrase.length) {
+                const t = setTimeout(
+                    () => setTypedText(currentPhrase.slice(0, typedText.length + 1)),
+                    TYPING_SPEED
+                )
+                return () => clearTimeout(t)
             }
-        }, TYPING_SPEED)
-
-        return () => clearInterval(typingInterval)
-    }, [currentPhraseIndex])
-
-    /**
-     * Smooth scroll to a section by ID
-     * @param {string} id - Section ID to scroll to
-     */
-    const scrollToSection = useCallback((id) => {
-        const element = document.getElementById(id)
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-
-            setTimeout(() => {
-                element.focus({ preventScroll: true })
-            }, 300)
+            const t = setTimeout(() => setIsErasing(true), TYPING_PAUSE)
+            return () => clearTimeout(t)
         }
-    }, [])
 
-    /**
-     * Scroll down to next section
-     */
+        if (typedText.length > 0) {
+            const t = setTimeout(
+                () => setTypedText(prev => prev.slice(0, -1)),
+                ERASE_SPEED
+            )
+            return () => clearTimeout(t)
+        }
+
+        // End of erase: advance to next phrase asynchronously to avoid
+        // triggering the set-state-in-effect lint rule
+        const t = setTimeout(() => {
+            setIsErasing(false)
+            setPhraseIndex(prev => (prev + 1) % phrases.length)
+        }, 0)
+        return () => clearTimeout(t)
+    }, [typedText, isErasing, phraseIndex])
+
+    const scrollToSection = useScrollToSection()
+
     const scrollDown = useCallback(() => {
-        const nextSection = document.getElementById('about')
-        if (nextSection) {
-            nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
+        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, [])
 
     return (
         <section
             className="min-h-screen relative flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
-            role="main"
             aria-label="Section d'introduction"
         >
             {/* Main content */}
@@ -103,8 +83,6 @@ function Hero() {
                         className={`inline-block mb-6 sm:mb-8 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border/50 rounded-full transition-all duration-700 delay-100 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                         }`}
-                        role="status"
-                        aria-live="polite"
                     >
                         <span className="text-sm sm:text-base text-ethereal-400 font-semibold tracking-wide">
                             👨‍💻 Développeur en formation, orienté systèmes & création

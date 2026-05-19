@@ -1,55 +1,10 @@
-import {useEffect, useRef, useState, memo} from 'react'
+import { memo } from 'react'
+import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
-/**
- * Skills component - Technical skills showcase section
- * Features:
- * - Intersection Observer for scroll animation with reduced motion support
- * - Responsive grid layout with optimal breakpoints
- * - Enhanced hover effects with glow and scale animations
- * - Categorized skills with visual indicators
- * - Full accessibility (ARIA labels, keyboard navigation, semantic HTML)
- * - Performance optimizations
- */
+const STAGGER_DELAY = 80
+
 function Skills() {
-    const INTERSECTION_THRESHOLD = 0.1
-    const INTERSECTION_ROOT_MARGIN = '0px 0px -10% 0px'
-    const STAGGER_DELAY = 80 // en ms
-
-    const [isVisible, setIsVisible] = useState(false)
-    const sectionRef = useRef(null)
-
-    useEffect(() => {
-        const currentRef = sectionRef.current
-        if (!currentRef) return
-
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        if (prefersReducedMotion) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsVisible(true)
-            return
-        }
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting && !isVisible) {
-                    setIsVisible(true)
-                }
-            },
-            {
-                threshold: INTERSECTION_THRESHOLD,
-                rootMargin: INTERSECTION_ROOT_MARGIN
-            }
-        )
-
-        observer.observe(currentRef)
-
-        return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef)
-            }
-            observer.disconnect()
-        }
-    }, [isVisible])
+    const { isVisible, sectionRef } = useScrollAnimation()
 
     const skills = [
         {
@@ -171,11 +126,7 @@ function Skills() {
                     }`}
                 >
                     {/* Section badge */}
-                    <div
-                        className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full"
-                        role="status"
-                        aria-live="polite"
-                    >
+                    <div className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full">
                         <span className="text-sm sm:text-base text-ethereal-400 font-medium">
                             🛠️ Compétences
                         </span>
@@ -187,7 +138,7 @@ function Skills() {
                         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 text-white leading-[1.1] tracking-tight"
                     >
                         Technologies{' '}
-                        <span className="text-ethereal-400 inline-block">maîtrisées</span>
+                        <span className="text-ethereal-400 inline-block">pratiquées</span>
                     </h2>
 
                     {/* Description */}
@@ -218,10 +169,8 @@ function Skills() {
                                 <div className="relative h-full">
                                     {/* Main card */}
                                     <div
-                                        className="relative h-full p-5 sm:p-6 lg:p-8 bg-dark-surface/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl transition-all duration-300 hover:border-ethereal-600/50 hover:-translate-y-2 hover:scale-105 hover:shadow-2xl hover:shadow-ethereal-600/10 focus-within:border-ethereal-600/50 focus-within:-translate-y-2 cursor-pointer"
-                                        tabIndex="0"
+                                        className="relative h-full p-5 sm:p-6 lg:p-8 bg-dark-surface/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl transition-all duration-300 hover:border-ethereal-600/50 hover:-translate-y-2 hover:scale-105 hover:shadow-2xl hover:shadow-ethereal-600/10 focus-within:border-ethereal-600/50 focus-within:-translate-y-2"
                                         aria-label={`${skill.name} - ${skill.category} - Niveau ${skill.level}`}
-                                        role="button"
                                     >
                                         {/* Gradient overlay on hover */}
                                         <div
@@ -285,8 +234,8 @@ function Skills() {
                                                 </span>
                                             </div>
 
-                                            {/* Description on hover (hidden on mobile) */}
-                                            <p className="hidden sm:block text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300 mt-2 leading-relaxed opacity-0 group-hover:opacity-100">
+                                            {/* Description: always visible on mobile, appears on hover for desktop */}
+                                            <p className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300 mt-2 leading-relaxed sm:opacity-0 sm:group-hover:opacity-100">
                                                 {skill.description}
                                             </p>
                                         </div>

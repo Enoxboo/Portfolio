@@ -1,57 +1,13 @@
-import {useEffect, useRef, useState, memo} from 'react'
+import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
-/**
- * About component - Personal introduction section
- * Features:
- * - Intersection Observer for scroll animation with cleanup
- * - Responsive layout with stats grid
- * - Enhanced accessibility (ARIA labels, semantic HTML, reduced motion support)
- * - Performance optimizations (memoization, threshold tuning)
- */
 function About() {
-    const INTERSECTION_THRESHOLD = 0.1
-    const INTERSECTION_ROOT_MARGIN = '0px 0px -10% 0px'
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    const [isVisible, setIsVisible] = useState(prefersReducedMotion)
-    const sectionRef = useRef(null)
-
-    useEffect(() => {
-        const currentRef = sectionRef.current
-        if (!currentRef) return
-
-        if (prefersReducedMotion) {
-            return
-        }
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting && !isVisible) {
-                    setIsVisible(true)
-                }
-            },
-            {
-                threshold: INTERSECTION_THRESHOLD,
-                rootMargin: INTERSECTION_ROOT_MARGIN
-            }
-        )
-
-        observer.observe(currentRef)
-
-        return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef)
-            }
-            observer.disconnect()
-        }
-    }, [isVisible, prefersReducedMotion])
+    const { isVisible, sectionRef } = useScrollAnimation()
 
     const stats = [
         {
             value: '8+',
             label: 'Technologies',
-            ariaLabel: 'Plus de 8 technologies maîtrisées incluant JavaScript, Python, et Go'
+            ariaLabel: 'Plus de 8 technologies pratiquées incluant JavaScript, Python, et Go'
         },
         {
             value: '3',
@@ -78,13 +34,8 @@ function About() {
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}
                 >
-
                     {/* Section badge */}
-                    <div
-                        className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full"
-                        role="status"
-                        aria-live="polite"
-                    >
+                    <div className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full">
                         <span className="text-sm sm:text-base text-ethereal-400 font-medium">
                             À propos
                         </span>
@@ -96,7 +47,7 @@ function About() {
                         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 lg:mb-10 text-white leading-[1.1] tracking-tight"
                     >
                         Comprendre avant{' '}
-                        <span className="text-ethereal-400 inline-block">d’optimiser</span>
+                        <span className="text-ethereal-400 inline-block">d'optimiser</span>
                     </h2>
 
                     {/* Description */}
@@ -104,20 +55,20 @@ function About() {
                         <p>
                             Étudiant en{' '}
                             <span className="text-ethereal-400 font-semibold">informatique</span>{' '}
-                            et développeur en formation, ce qui me motive le plus dans le code n’est
+                            et développeur en formation, ce qui me motive le plus dans le code n'est
                             pas seulement de faire fonctionner quelque chose, mais de{' '}
                             <span className="text-white font-semibold">comprendre pourquoi ça fonctionne</span>.
                         </p>
 
                         <p>
-                            J’ai travaillé sur des projets variés, notamment des jeux vidéo avec{' '}
+                            J'ai travaillé sur des projets variés, notamment des jeux vidéo avec{' '}
                             <span className="text-white font-semibold">Godot</span>, ainsi que des
-                            applications web. J’aime partir d’idées simples et les pousser jusqu’à
+                            applications web. J'aime partir d'idées simples et les pousser jusqu'à
                             un résultat fini, même imparfait.
                         </p>
 
                         <p>
-                            J’apprends principalement par l’expérimentation : tester, casser,
+                            J'apprends principalement par l'expérimentation : tester, casser,
                             recommencer, documenter. Les zones floues et les bugs difficiles à
                             comprendre sont ce qui me frustre le plus, mais aussi ce qui me fait
                             le plus progresser.
@@ -149,8 +100,7 @@ function About() {
                                 >
                                     {stat.value}
                                 </div>
-                                <div
-                                    className="text-gray-400 text-xs sm:text-sm lg:text-base uppercase tracking-wider font-medium">
+                                <div className="text-gray-400 text-xs sm:text-sm lg:text-base uppercase tracking-wider font-medium">
                                     {stat.label}
                                 </div>
                             </div>
@@ -162,4 +112,4 @@ function About() {
     )
 }
 
-export default memo(About)
+export default About
