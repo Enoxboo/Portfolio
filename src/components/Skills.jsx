@@ -171,11 +171,7 @@ function Skills() {
                     }`}
                 >
                     {/* Section badge */}
-                    <div
-                        className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full"
-                        role="status"
-                        aria-live="polite"
-                    >
+                    <div className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full">
                         <span className="text-sm sm:text-base text-ethereal-400 font-medium">
                             🛠️ Compétences
                         </span>
@@ -218,10 +214,8 @@ function Skills() {
                                 <div className="relative h-full">
                                     {/* Main card */}
                                     <div
-                                        className="relative h-full p-5 sm:p-6 lg:p-8 bg-dark-surface/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl transition-all duration-300 hover:border-ethereal-600/50 hover:-translate-y-2 hover:scale-105 hover:shadow-2xl hover:shadow-ethereal-600/10 focus-within:border-ethereal-600/50 focus-within:-translate-y-2 cursor-pointer"
-                                        tabIndex="0"
+                                        className="relative h-full p-5 sm:p-6 lg:p-8 bg-dark-surface/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl transition-all duration-300 hover:border-ethereal-600/50 hover:-translate-y-2 hover:scale-105 hover:shadow-2xl hover:shadow-ethereal-600/10 focus-within:border-ethereal-600/50 focus-within:-translate-y-2"
                                         aria-label={`${skill.name} - ${skill.category} - Niveau ${skill.level}`}
-                                        role="button"
                                     >
                                         {/* Gradient overlay on hover */}
                                         <div
