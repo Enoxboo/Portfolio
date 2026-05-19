@@ -6,17 +6,11 @@ import Projects from './components/Projects'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import NebulaBackground from './components/NebulaBackground'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
-/**
- * App component - Main application layout
- * Features:
- * - Semantic HTML structure with proper landmarks
- * - Skip to main content link for accessibility
- * - Fixed background with proper z-index management
- * - Optimized rendering with component organization
- */
 function App() {
     return (
+        <ErrorBoundary>
         <div className="min-h-screen bg-dark-bg text-white relative overflow-x-hidden">
             {/* Skip to main content link for keyboard navigation */}
             <a
@@ -49,6 +43,7 @@ function App() {
             {/* Footer */}
             <Footer />
         </div>
+        </ErrorBoundary>
     )
 }
 

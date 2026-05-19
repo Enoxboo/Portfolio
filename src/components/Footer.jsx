@@ -86,7 +86,7 @@ function Footer() {
                             </span>
                         </button>
                         <p className="text-sm sm:text-base text-gray-400 mt-2 font-medium">
-                            Développeur Full Stack
+                            Développeur en formation
                         </p>
                         <p className="text-xs sm:text-sm text-gray-500 mt-1">
                             Étudiant B2 Informatique
