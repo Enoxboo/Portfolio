@@ -178,7 +178,7 @@ function Skills() {
                         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 text-white leading-[1.1] tracking-tight"
                     >
                         Technologies{' '}
-                        <span className="text-ethereal-400 inline-block">maîtrisées</span>
+                        <span className="text-ethereal-400 inline-block">pratiquées</span>
                     </h2>
 
                     {/* Description */}
@@ -274,8 +274,8 @@ function Skills() {
                                                 </span>
                                             </div>
 
-                                            {/* Description on hover (hidden on mobile) */}
-                                            <p className="hidden sm:block text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300 mt-2 leading-relaxed opacity-0 group-hover:opacity-100">
+                                            {/* Description: always visible on mobile, appears on hover for desktop */}
+                                            <p className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300 mt-2 leading-relaxed sm:opacity-0 sm:group-hover:opacity-100">
                                                 {skill.description}
                                             </p>
                                         </div>
