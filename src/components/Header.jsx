@@ -309,7 +309,7 @@ function Header() {
                                     </svg>
                                 </a>
                                 <a
-                                    href="https://linkedin.com/in/matteo-marquant-67469a266/"
+                                    href="https://www.linkedin.com/in/matteo-marquant-67469a266/"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="p-2 text-gray-400 hover:text-ethereal-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 rounded-lg"
