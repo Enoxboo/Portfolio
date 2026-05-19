@@ -88,7 +88,6 @@ function Hero() {
     return (
         <section
             className="min-h-screen relative flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
-            role="main"
             aria-label="Section d'introduction"
         >
             {/* Main content */}
@@ -103,8 +102,6 @@ function Hero() {
                         className={`inline-block mb-6 sm:mb-8 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border/50 rounded-full transition-all duration-700 delay-100 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                         }`}
-                        role="status"
-                        aria-live="polite"
                     >
                         <span className="text-sm sm:text-base text-ethereal-400 font-semibold tracking-wide">
                             👨‍💻 Développeur en formation, orienté systèmes & création

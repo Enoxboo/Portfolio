@@ -80,11 +80,7 @@ function About() {
                 >
 
                     {/* Section badge */}
-                    <div
-                        className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full"
-                        role="status"
-                        aria-live="polite"
-                    >
+                    <div className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full">
                         <span className="text-sm sm:text-base text-ethereal-400 font-medium">
                             À propos
                         </span>
