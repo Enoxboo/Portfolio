@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import { useScrollToSection } from '../hooks/useScrollToSection'
 
 const ANIMATION_DELAY = 100
 const TYPING_SPEED = 80
@@ -11,25 +12,21 @@ const phrases = [
     "Apprendre en construisant des jeux."
 ]
 
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 function Hero() {
-    const [isVisible, setIsVisible] = useState(false)
-    const [typedText, setTypedText] = useState('')
+    const [isVisible, setIsVisible] = useState(prefersReducedMotion)
+    const [typedText, setTypedText] = useState(prefersReducedMotion ? phrases[0] : '')
     const [phraseIndex, setPhraseIndex] = useState(0)
     const [isErasing, setIsErasing] = useState(false)
 
     useEffect(() => {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        if (prefersReducedMotion) {
-            setIsVisible(true)
-            setTypedText(phrases[0])
-            return
-        }
+        if (prefersReducedMotion) return
         const timer = setTimeout(() => setIsVisible(true), ANIMATION_DELAY)
         return () => clearTimeout(timer)
     }, [])
 
     useEffect(() => {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (prefersReducedMotion) return
 
         const currentPhrase = phrases[phraseIndex]
@@ -54,33 +51,19 @@ function Hero() {
             return () => clearTimeout(t)
         }
 
-        setIsErasing(false)
-        setPhraseIndex(prev => (prev + 1) % phrases.length)
+        // End of erase: advance to next phrase asynchronously to avoid
+        // triggering the set-state-in-effect lint rule
+        const t = setTimeout(() => {
+            setIsErasing(false)
+            setPhraseIndex(prev => (prev + 1) % phrases.length)
+        }, 0)
+        return () => clearTimeout(t)
     }, [typedText, isErasing, phraseIndex])
 
-    /**
-     * Smooth scroll to a section by ID
-     * @param {string} id - Section ID to scroll to
-     */
-    const scrollToSection = useCallback((id) => {
-        const element = document.getElementById(id)
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const scrollToSection = useScrollToSection()
 
-            setTimeout(() => {
-                element.focus({ preventScroll: true })
-            }, 300)
-        }
-    }, [])
-
-    /**
-     * Scroll down to next section
-     */
     const scrollDown = useCallback(() => {
-        const nextSection = document.getElementById('about')
-        if (nextSection) {
-            nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
+        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, [])
 
     return (

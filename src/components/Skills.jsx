@@ -1,50 +1,10 @@
-import {useEffect, useRef, useState, memo} from 'react'
+import { memo } from 'react'
+import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
-/**
- * Skills component - Technical skills showcase section
- * Features:
- * - Intersection Observer for scroll animation with reduced motion support
- * - Responsive grid layout with optimal breakpoints
- * - Enhanced hover effects with glow and scale animations
- * - Categorized skills with visual indicators
- * - Full accessibility (ARIA labels, keyboard navigation, semantic HTML)
- * - Performance optimizations
- */
+const STAGGER_DELAY = 80
+
 function Skills() {
-    const INTERSECTION_THRESHOLD = 0.1
-    const INTERSECTION_ROOT_MARGIN = '0px 0px -10% 0px'
-    const STAGGER_DELAY = 80 // en ms
-
-    const [isVisible, setIsVisible] = useState(false)
-    const sectionRef = useRef(null)
-
-    useEffect(() => {
-        const currentRef = sectionRef.current
-        if (!currentRef) return
-
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        if (prefersReducedMotion) {
-            setIsVisible(true)
-            return
-        }
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true)
-                    observer.disconnect()
-                }
-            },
-            {
-                threshold: INTERSECTION_THRESHOLD,
-                rootMargin: INTERSECTION_ROOT_MARGIN
-            }
-        )
-
-        observer.observe(currentRef)
-
-        return () => observer.disconnect()
-    }, [])
+    const { isVisible, sectionRef } = useScrollAnimation()
 
     const skills = [
         {
