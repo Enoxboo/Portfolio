@@ -77,7 +77,7 @@ function Footer() {
                     <div className="text-center md:text-left">
                         <button
                             onClick={scrollToTop}
-                            onKeyPress={(e) => handleKeyPress(e, scrollToTop)}
+                            onKeyDown={(e) => handleKeyPress(e, scrollToTop)}
                             className="group text-2xl sm:text-3xl font-bold text-ethereal-400 hover:text-ethereal-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg rounded-lg px-3 py-2"
                             aria-label="Retour en haut de la page"
                         >
@@ -102,7 +102,7 @@ function Footer() {
                             <button
                                 key={item.id}
                                 onClick={() => scrollToSection(item.id)}
-                                onKeyPress={(e) => handleKeyPress(e, () => scrollToSection(item.id))}
+                                onKeyDown={(e) => handleKeyPress(e, () => scrollToSection(item.id))}
                                 className="text-sm lg:text-base text-gray-400 hover:text-ethereal-400 transition-all duration-200 focus:outline-none focus:text-ethereal-400 relative group py-1"
                                 aria-label={`Aller à la section ${item.label}`}
                             >
@@ -151,7 +151,7 @@ function Footer() {
                         <button
                             key={item.id}
                             onClick={() => scrollToSection(item.id)}
-                            onKeyPress={(e) => handleKeyPress(e, () => scrollToSection(item.id))}
+                            onKeyDown={(e) => handleKeyPress(e, () => scrollToSection(item.id))}
                             className="text-sm text-gray-400 hover:text-ethereal-400 transition-colors duration-200 focus:outline-none focus:text-ethereal-400 relative group py-1"
                             aria-label={`Aller à la section ${item.label}`}
                         >
@@ -194,7 +194,7 @@ function Footer() {
                 <div className="flex justify-center mb-8">
                     <button
                         onClick={scrollToTop}
-                        onKeyPress={(e) => handleKeyPress(e, scrollToTop)}
+                        onKeyDown={(e) => handleKeyPress(e, scrollToTop)}
                         className="group p-3.5 bg-dark-surface/50 backdrop-blur-sm border border-dark-border/50 rounded-full hover:border-ethereal-600 hover:bg-ethereal-600/10 transition-all duration-200 hover:-translate-y-1 focus:outline-none focus:border-ethereal-600 focus:ring-2 focus:ring-ethereal-600/20 shadow-lg hover:shadow-ethereal-600/20"
                         aria-label="Remonter en haut de la page"
                     >

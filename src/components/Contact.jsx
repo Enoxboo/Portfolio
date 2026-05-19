@@ -41,8 +41,9 @@ function Contact() {
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting && !isVisible) {
+                if (entry.isIntersecting) {
                     setIsVisible(true)
+                    observer.disconnect()
                 }
             },
             {
@@ -53,13 +54,8 @@ function Contact() {
 
         observer.observe(currentRef)
 
-        return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef)
-            }
-            observer.disconnect()
-        }
-    }, [isVisible])
+        return () => observer.disconnect()
+    }, [])
 
     useEffect(() => {
         if (submitStatus) {
@@ -87,11 +83,12 @@ function Contact() {
                 if (!value.trim()) return 'Le nom est requis'
                 if (value.trim().length < 2) return 'Le nom doit contenir au moins 2 caractères'
                 return null
-            case 'email':
-                { if (!value.trim()) return "L'email est requis"
+            case 'email': {
+                if (!value.trim()) return "L'email est requis"
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                 if (!emailRegex.test(value)) return "L'email n'est pas valide"
-                return null }
+                return null
+            }
             case 'message':
                 if (!value.trim()) return 'Le message est requis'
                 if (value.trim().length < 10) return 'Le message doit contenir au moins 10 caractères'
