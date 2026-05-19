@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, memo} from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * About component - Personal introduction section
@@ -27,8 +27,9 @@ function About() {
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting && !isVisible) {
+                if (entry.isIntersecting) {
                     setIsVisible(true)
+                    observer.disconnect()
                 }
             },
             {
@@ -39,13 +40,8 @@ function About() {
 
         observer.observe(currentRef)
 
-        return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef)
-            }
-            observer.disconnect()
-        }
-    }, [isVisible, prefersReducedMotion])
+        return () => observer.disconnect()
+    }, [])
 
     const stats = [
         {
@@ -158,4 +154,4 @@ function About() {
     )
 }
 
-export default memo(About)
+export default About

@@ -24,15 +24,15 @@ function Skills() {
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (prefersReducedMotion) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsVisible(true)
             return
         }
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting && !isVisible) {
+                if (entry.isIntersecting) {
                     setIsVisible(true)
+                    observer.disconnect()
                 }
             },
             {
@@ -43,13 +43,8 @@ function Skills() {
 
         observer.observe(currentRef)
 
-        return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef)
-            }
-            observer.disconnect()
-        }
-    }, [isVisible])
+        return () => observer.disconnect()
+    }, [])
 
     const skills = [
         {
