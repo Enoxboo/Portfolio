@@ -95,7 +95,7 @@ body {
    FOCUS STYLES
    ============================================ */
 
-*:focus {
+*:focus:not(:focus-visible) {
     outline: none;
 }
 

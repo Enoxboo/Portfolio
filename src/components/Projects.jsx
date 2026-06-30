@@ -1,4 +1,3 @@
-import { memo } from 'react'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { GitHubIcon } from './icons/GitHubIcon'
 
@@ -196,4 +195,4 @@ function Projects() {
     )
 }
 
-export default memo(Projects)
+export default Projects

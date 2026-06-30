@@ -33,12 +33,6 @@ function Contact() {
         }
     }, [submitStatus])
 
-    /**
-     * Validate form field
-     * @param {string} name - Field name
-     * @param {string} value - Field value
-     * @returns {string|null} Error message or null
-     */
     const validateField = (name, value) => {
         switch (name) {
             case 'name':
@@ -60,10 +54,6 @@ function Contact() {
         }
     }
 
-    /**
-     * Handle form input changes with validation
-     * @param {Event} e - Input change event
-     */
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormState(prev => ({
@@ -80,10 +70,6 @@ function Contact() {
         }
     }
 
-    /**
-     * Handle field blur for validation
-     * @param {Event} e - Blur event
-     */
     const handleBlur = (e) => {
         const { name, value } = e.target
         setTouched(prev => ({
@@ -98,10 +84,6 @@ function Contact() {
         }))
     }
 
-    /**
-     * Handle form submission with validation
-     * @param {Event} e - Form submit event
-     */
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -142,8 +124,7 @@ function Contact() {
             } else {
                 setSubmitStatus('error')
             }
-        } catch (error) {
-            console.error('Erreur lors de l\'envoi du formulaire:', error)
+        } catch {
             setSubmitStatus('error')
         } finally {
             setIsSubmitting(false)

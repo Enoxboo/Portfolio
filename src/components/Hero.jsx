@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useScrollToSection } from '../hooks/useScrollToSection'
+import cvUrl from '../assets/cv.pdf'
 
 const ANIMATION_DELAY = 100
 const TYPING_SPEED = 80
@@ -51,8 +52,6 @@ function Hero() {
             return () => clearTimeout(t)
         }
 
-        // End of erase: advance to next phrase asynchronously to avoid
-        // triggering the set-state-in-effect lint rule
         const t = setTimeout(() => {
             setIsErasing(false)
             setPhraseIndex(prev => (prev + 1) % phrases.length)
@@ -71,7 +70,6 @@ function Hero() {
             className="min-h-screen relative flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
             aria-label="Section d'introduction"
         >
-            {/* Main content */}
             <div className="container mx-auto max-w-7xl relative z-10 py-20 sm:py-24">
                 <div
                     className={`max-w-5xl mx-auto transition-all duration-1000 ease-out ${
@@ -89,7 +87,7 @@ function Hero() {
                         </span>
                     </div>
 
-                    {/* Name heading with gradient */}
+                    {/* Name heading */}
                     <h1
                         className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-6 sm:mb-8 bg-linear-to-r from-ethereal-300 via-ethereal-400 to-ethereal-500 bg-clip-text text-transparent leading-[1.1] tracking-tight transition-all duration-700 delay-200 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -107,7 +105,7 @@ function Hero() {
                         Étudiant en <span className="text-white font-bold">B2 Informatique</span> passionné par le développement.
                     </p>
 
-                    {/* Typing effect description */}
+                    {/* Typing effect */}
                     <div
                         className={`text-base sm:text-lg md:text-xl text-gray-400 mb-10 sm:mb-12 lg:mb-16 leading-relaxed min-h-14 sm:min-h-16 transition-all duration-700 delay-400 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -123,29 +121,41 @@ function Hero() {
 
                     {/* CTA buttons */}
                     <div
-                        className={`flex flex-col sm:flex-row gap-4 sm:gap-5 transition-all duration-700 delay-500 ${
+                        className={`flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-5 transition-all duration-700 delay-500 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}
                     >
+                        {/* Primary: projects */}
                         <button
                             onClick={() => scrollToSection('projects')}
                             className="group relative w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-ethereal-600 hover:bg-ethereal-500 active:bg-ethereal-700 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg shadow-xl shadow-ethereal-600/25 hover:shadow-ethereal-500/40 hover:-translate-y-1 overflow-hidden"
                             aria-label="Voir mes projets"
                         >
-                            {/* Gradient overlay on hover */}
                             <span className="absolute inset-0 bg-linear-to-r from-ethereal-500 to-ethereal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
-
                             <span className="relative font-semibold text-base sm:text-lg text-white">
                                 Voir mes projets
                             </span>
-                            <span
-                                className="relative transform group-hover:translate-x-1 transition-transform duration-200 text-white text-xl"
-                                aria-hidden="true"
-                            >
+                            <span className="relative transform group-hover:translate-x-1 transition-transform duration-200 text-white text-xl" aria-hidden="true">
                                 →
                             </span>
                         </button>
 
+                        {/* Secondary: download CV */}
+                        <a
+                            href={cvUrl}
+                            download="CV-Matteo-Marquant.pdf"
+                            className="group w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 border-2 border-ethereal-600/50 hover:border-ethereal-500 bg-ethereal-600/10 hover:bg-ethereal-600/20 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg backdrop-blur-sm hover:-translate-y-1 flex items-center justify-center gap-3"
+                            aria-label="Télécharger mon CV (PDF)"
+                        >
+                            <svg className="w-5 h-5 text-ethereal-400 group-hover:text-ethereal-300 transition-colors duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span className="font-semibold text-base sm:text-lg text-gray-200 group-hover:text-white transition-colors duration-200">
+                                Télécharger mon CV
+                            </span>
+                        </a>
+
+                        {/* Tertiary: contact */}
                         <button
                             onClick={() => scrollToSection('contact')}
                             className="group w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 border-2 border-dark-border hover:border-ethereal-600 bg-transparent hover:bg-ethereal-600/10 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ethereal-400 focus:ring-offset-2 focus:ring-offset-dark-bg backdrop-blur-sm hover:-translate-y-1"
@@ -157,7 +167,7 @@ function Hero() {
                         </button>
                     </div>
 
-                    {/* Stats - Quick info */}
+                    {/* Quick stats */}
                     <div
                         className={`flex flex-wrap items-center gap-6 sm:gap-8 lg:gap-12 mt-12 sm:mt-16 lg:mt-20 pt-12 sm:pt-16 border-t border-dark-border/50 transition-all duration-700 delay-600 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'

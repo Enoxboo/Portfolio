@@ -7,7 +7,7 @@ Single-page student portfolio, space-themed. French language.
 - **Author:** Matteo Marquant (B2 Informatique, Toulouse)
 - **Stack:** React 19 · Tailwind CSS 4 · Vite 7 · Formspree (contact form)
 - **Sections (top → bottom):** Hero → About → Skills → Projects → Contact → Footer
-- **Background:** Canvas animation — 400 stars + 8 nebula clouds + mouse trail (`NebulaBackground.jsx`)
+- **Background:** Canvas animation — stars + nebula clouds + mouse trail (`NebulaBackground.jsx`)
 
 ---
 
@@ -16,19 +16,27 @@ Single-page student portfolio, space-themed. French language.
 ```
 src/
   components/
-    Header.jsx          Fixed nav, mobile menu (hamburger), scroll handlers, focus trap
-    Hero.jsx            Landing section, typing effect, CTA buttons, decorative orbs
-    About.jsx           Personal intro, stats grid, scroll-in animation
-    Skills.jsx          12 skill cards (emoji icon, proficiency dots), 2→3→4 col grid
-    Projects.jsx        3 project cards with GitHub links, stagger animation
-    Contact.jsx         Formspree form, real-time validation, social links
-    Footer.jsx          Nav, back-to-top, copyright
-    NebulaBackground.jsx  Canvas star/nebula animation, mouse repulsion physics
-  App.jsx               Root: skip link, z-index stack (bg=0, header=50, content=10)
-  index.css             Tailwind v4 @theme vars, custom animations, scrollbar, sr-only
-  main.jsx              React root mount
+    Header.jsx            Fixed nav, mobile menu (hamburger), scroll handlers, focus trap
+    Hero.jsx              Landing section, typing effect, CTA buttons, decorative orbs
+    About.jsx             Personal intro, stats grid, scroll-in animation
+    Skills.jsx            12 skill cards (emoji icon, proficiency dots), 2→3→4 col grid
+    Projects.jsx          3 project cards with GitHub links, stagger animation
+    Contact.jsx           Formspree form, real-time validation, honeypot, social links
+    Footer.jsx            Nav, back-to-top, copyright
+    ErrorBoundary.jsx     Wraps App, catches render errors
+    NebulaBackground.jsx  Canvas star/nebula animation, mouse+touch repulsion physics
+  hooks/
+    useScrollAnimation.js  IntersectionObserver → isVisible flag (reused by 4 sections)
+    useScrollToSection.js  Smooth-scroll to section ID (reused by Header, Hero, Footer)
+  icons/
+    GitHubIcon.jsx         Shared GitHub SVG component
+    LinkedInIcon.jsx       Shared LinkedIn SVG component
+  constants.js             INTERSECTION_THRESHOLD, INTERSECTION_ROOT_MARGIN
+  App.jsx                  Root: skip link, z-index stack (bg=0, header=50, content=10)
+  index.css                Tailwind v4 @theme vars, custom animations, scrollbar, sr-only
+  main.jsx                 React root mount
 
-index.html              SEO meta, Open Graph, Twitter cards, JSON-LD Person schema
+index.html                 SEO meta, Open Graph, Twitter cards, JSON-LD Person schema
 ```
 
 **Routing:** none — single-page smooth-scroll via `document.getElementById(id).scrollIntoView()`.
@@ -41,169 +49,460 @@ index.html              SEO meta, Open Graph, Twitter cards, JSON-LD Person sche
 
 ---
 
-## Flaws Audit
+## Audit — What to Improve
 
-### 1. Code Quality — Bugs
+Ordered by impact. The nebula is covered first because it's the single highest-visibility improvement.
 
-**[BUG] `NebulaBackground.jsx:252` — `visibilitychange` listener never removed (memory leak)**
+---
+
+## 1. NEBULA WOW EFFECT (Priority 1)
+
+The current nebula is technically solid (mouse repulsion, twinkle, touch support, resize-safe) but visually understated. A recruiter who lands on the page should feel like they're in deep space. Here's the full plan for a dramatic upgrade, split into independent tasks you can do one at a time.
+
+### 1.1 Shooting stars (meteors) — highest visual impact
+
+A `Meteor` class that fires a bright streak across the canvas every 3–8 seconds. Random start position along the top/left edge, ~45° angle, 200–400px tail with a linear gradient fading to transparent. Decays over ~1 second.
+
 ```js
-document.addEventListener('visibilitychange', handleVisibilityChange)
-// the cleanup return () => {} doesn't remove this listener
+class Meteor {
+    constructor(canvas) {
+        this.canvas = canvas
+        this.active = false
+    }
+
+    spawn() {
+        this.x = Math.random() * this.canvas.width
+        this.y = Math.random() * this.canvas.height * 0.4
+        const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.4
+        const speed = 10 + Math.random() * 8
+        this.dx = Math.cos(angle) * speed
+        this.dy = Math.sin(angle) * speed
+        this.life = 1.0
+        this.decay = 0.018 + Math.random() * 0.015
+        this.tailLength = 120 + Math.random() * 150
+        this.width = 1.5 + Math.random() * 1.5
+        this.active = true
+    }
+
+    update() {
+        if (!this.active) return
+        this.x += this.dx
+        this.y += this.dy
+        this.life -= this.decay
+        if (this.life <= 0 || this.x > this.canvas.width + 200) this.active = false
+    }
+
+    draw(ctx) {
+        if (!this.active) return
+        const norm = Math.hypot(this.dx, this.dy)
+        const tx = this.x - (this.dx / norm) * this.tailLength
+        const ty = this.y - (this.dy / norm) * this.tailLength
+        const g = ctx.createLinearGradient(tx, ty, this.x, this.y)
+        g.addColorStop(0, 'rgba(255,255,255,0)')
+        g.addColorStop(0.7, `rgba(200,180,255,${this.life * 0.6})`)
+        g.addColorStop(1, `rgba(255,255,255,${this.life})`)
+        ctx.strokeStyle = g
+        ctx.lineWidth = this.width * this.life
+        ctx.lineCap = 'round'
+        ctx.beginPath()
+        ctx.moveTo(tx, ty)
+        ctx.lineTo(this.x, this.y)
+        ctx.stroke()
+    }
+}
 ```
-Fix: add `document.removeEventListener('visibilitychange', handleVisibilityChange)` to the cleanup function.
 
-**[BUG] `Hero.jsx:91` — `role="main"` on `<section>` is invalid semantics**
-The section is already inside `<main id="main-content">` in `App.jsx`. A `<section>` cannot also carry `role="main"`. Remove the role attribute.
+In `animate()`, maintain a pool of 3 `Meteor` instances. Use a separate `meteorTimer` counter to spawn one every `180 + Math.random() * 300` frames (~3–8 seconds at 60fps). With time-based animation (see §3.2) tie this to elapsed ms instead.
 
-**[BUG] `Contact.jsx:91-94` — email `switch` case uses spurious block scope `{ }`**
+### 1.2 Layered parallax depth — creates real 3D feel
+
+Currently all stars are at the same perceived depth. Split into 3 layers:
+
+| Layer | Count (desktop) | Size range | Brightness | Mouse repulsion factor |
+|-------|-----------------|------------|------------|------------------------|
+| Far (0) | 200 | 0.2–0.7 | 0.2–0.5 | 0.4× |
+| Mid (1) | 150 | 0.5–1.3 | 0.4–0.9 | 1.0× (current) |
+| Near (2) | 50 | 1.2–2.8 | 0.7–1.0 | 1.8× |
+
+Add a `layer` property to `Star`. Far stars twinkle slower, near stars twinkle faster and are more reactive. This single change makes the canvas feel like genuine space.
+
+### 1.3 Colored stars by temperature
+
+Real stars range from hot blue-white to cool orange-red. Replace the uniform `rgba(255,255,255,alpha)` with a color table:
+
 ```js
-case 'email':
-    { if (!value.trim()) return "L'email est requis"
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return null }
+// In Star.reset():
+const rng = Math.random()
+if (rng < 0.04)       this.color = [180, 200, 255]  // blue-white (hot)
+else if (rng < 0.82)  this.color = [255, 255, 255]  // white (normal)
+else if (rng < 0.94)  this.color = [255, 240, 200]  // yellow-white
+else                  this.color = [255, 195, 140]  // orange-red (cool)
 ```
-The block exists only to allow `const` in a switch case. Restructure or lift `emailRegex` outside the switch.
+
+Then in `draw()`: `ctx.fillStyle = \`rgba(${r},${g},${b},${alpha})\``
+
+The lens flare on bright stars should use the star's own color tint.
+
+### 1.4 Visible cursor glow trail
+
+The current trail is invisible — users can't tell their mouse is doing anything until a star happens to be nearby. Add a soft particle render for each trail point before drawing stars:
+
+```js
+// In animate(), after clearing and drawing nebula, before drawing stars:
+ctx.globalCompositeOperation = 'screen'
+trailRef.current.forEach(point => {
+    const alpha = point.life * 0.12
+    const radius = 6 + (1 - point.life) * 20
+    const g = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius)
+    g.addColorStop(0, `rgba(180, 120, 255, ${alpha})`)
+    g.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = g
+    ctx.beginPath()
+    ctx.arc(point.x, point.y, radius, 0, Math.PI * 2)
+    ctx.fill()
+})
+ctx.globalCompositeOperation = 'source-over'
+```
+
+Keep it very subtle (alpha 0.12 max) so it doesn't feel like a paint app.
+
+### 1.5 Supernova flare — gives the background a sense of life
+
+Every 15–30 seconds, one random "bright" star (`isBright === true`) triggers a supernova. The star blooms to 10× size with a glowing ring, then fades over 2 seconds. Rare enough to feel like a discovery.
+
+```js
+// In Star class — add to update():
+if (this.supernovaLife > 0) {
+    this.supernovaLife--
+}
+
+triggerSupernova() {
+    this.supernovaLife = 120 // 2 seconds at 60fps
+}
+
+// In draw(), after normal draw:
+if (this.supernovaLife > 0) {
+    const t = this.supernovaLife / 120
+    const scale = Math.sin(t * Math.PI) * 10  // peaks then shrinks
+    const alpha = t * 0.7
+    ctx.strokeStyle = `rgba(220, 180, 255, ${alpha})`
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, this.baseSize * scale * 4, 0, Math.PI * 2)
+    ctx.stroke()
+    // Bright inner bloom
+    const bg = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.baseSize * scale * 2)
+    bg.addColorStop(0, `rgba(255,255,255,${alpha * 0.8})`)
+    bg.addColorStop(1, 'rgba(180,120,255,0)')
+    ctx.fillStyle = bg
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, this.baseSize * scale * 2, 0, Math.PI * 2)
+    ctx.fill()
+}
+```
+
+In `animate()`, add a `supernovaTimer` that fires every `900 + Math.random() * 900` frames and picks a random `isBright` star to `.triggerSupernova()`.
+
+### 1.6 Richer nebula (more dramatic breathing + color variety)
+
+Two problems with the current nebula:
+1. Breathing is barely perceptible (`±0.03` opacity)
+2. All 8 clouds are variations of purple — monochromatic
+
+Fixes:
+- Increase breathing amplitude to `±0.07`
+- Add 2 cool teal-blue clouds: `{ r: 50, g: 100, b: 180 }` and `{ r: 40, g: 140, b: 160 }`
+- Add 1 warm rose cloud: `{ r: 180, g: 60, b: 120 }`
+- Slow the breathing period down (divide `cloud.speed` by 3 for the opacity oscillation)
+
+```js
+// Current:
+const opacity = cloud.opacity + Math.sin(time * cloud.speed * 5) * 0.03
+// Better:
+const opacity = cloud.opacity + Math.sin(time * 0.00025 + cloud.offset) * 0.07
+```
+
+### 1.7 Milky Way density band (optional, high reward)
+
+Instead of uniform random star placement, bias 40% of stars toward a diagonal band (top-right to bottom-left). This creates the sense of looking through the galactic plane.
+
+```js
+// In Star.reset(), for ~40% of stars:
+if (Math.random() < 0.4) {
+    const t = Math.random()
+    // Band runs from (0, canvas.height * 0.2) to (canvas.width, canvas.height * 0.8)
+    const bx = t * this.canvas.width
+    const by = this.canvas.height * 0.2 + t * this.canvas.height * 0.6
+    this.baseX = bx + (Math.random() - 0.5) * this.canvas.width * 0.25
+    this.baseY = by + (Math.random() - 0.5) * this.canvas.height * 0.15
+} else {
+    // Normal uniform placement
+}
+```
 
 ---
 
-### 2. Code Quality — DRY / Architecture
+## 2. SECURITY
 
-**[DRY] `scrollToSection` function copy-pasted in `Header`, `Hero`, `Footer`**
-Extract to `src/hooks/useScrollToSection.js`.
+### [SEC-1] Missing social media images — 404 on share
+`/og-image.jpg`, `/twitter-image.jpg`, and `/apple-touch-icon.png` are referenced in `index.html` but don't exist in `public/`. Every social share of the portfolio will show a broken preview.
 
-**[DRY] IntersectionObserver scroll-animation pattern copy-pasted in `About`, `Skills`, `Projects`, `Contact` (~35 lines each)**
-Extract to `src/hooks/useScrollAnimation.js` with signature `useScrollAnimation(threshold, rootMargin)`.
+- Add `public/og-image.jpg` (1200×630px) — a screenshot or branded graphic
+- Add `public/twitter-image.jpg`
+- Add `public/apple-touch-icon.png` (180×180px)
+- Remove the `<!-- TODO -->` comments once done
 
-**[DRY] `INTERSECTION_THRESHOLD = 0.1` and `INTERSECTION_ROOT_MARGIN` defined inside 4 different component bodies**
-Move to `src/constants.js` as module-level exports.
+### [SEC-2] No Content Security Policy
+The page has no CSP. For a static SPA that loads nothing external (no CDN scripts, no third-party JS), a tight CSP is easy and removes a class of XSS attack vectors.
 
-**[DRY] GitHub SVG `<path>` duplicated 6+ times across Header, Contact, Projects (×2), Footer (×2)**
-Extract to a shared `<GitHubIcon />` component in `src/components/icons/`.
+Add to `index.html` `<head>`:
+```html
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://formspree.io; img-src 'self' data:; font-src 'self';" />
+```
 
----
+Or configure it at the server/CDN level (preferred — a `<meta>` CSP can't block frame ancestors).
 
-### 3. Code Quality — Performance
+### [SEC-3] Formspree endpoint exposed in bundle
+`FORMSPREE_ENDPOINT` is visible to anyone who opens DevTools. The honeypot field already mitigates most bot submissions, but consider also enabling Formspree's reCAPTCHA option from the Formspree dashboard — no code change needed.
 
-**[PERF] `Hero.jsx:22` — `phrases` array recreated every render**
-Define as a module-level constant outside the component.
-
-**[PERF] IntersectionObserver `useEffect` has `[isVisible]` as dependency in all 4 section components**
-This recreates the observer once after `isVisible` flips to `true`. Use a `useRef` to track observer and `[]` dependency.
-
----
-
-### 4. Code Quality — Minor Quality
-
-**[QUALITY] `Footer.jsx:80,105,154,197` — `onKeyPress` is deprecated**
-Deprecated in React 17+, removed in browsers. Replace with `onKeyDown`.
-
-**[QUALITY] `package.json` — `tailwindcss` and `@tailwindcss/vite` in `dependencies` instead of `devDependencies`**
-Build tools belong in `devDependencies`.
-
-**[QUALITY] `Skills.jsx:221` — `<div role="button" tabIndex="0">` with no `onClick` or `onKeyDown` handler**
-Keyboard users can focus the card but pressing Enter/Space does nothing. Add a handler (e.g., expand description) or remove the interactive role.
-
-**[QUALITY] `Skills.jsx:27`, `Projects.jsx:27` — `eslint-disable-next-line react-hooks/set-state-in-effect`**
-The correct fix is to call `setIsVisible(true)` before `return` in the reduced-motion early-return, which is valid React. Remove the eslint-disable.
-
-**[QUALITY] `About.jsx` — wrapped in `memo()` but receives no props**
-`memo` has no effect here since `About` never re-renders from parent. Remove or leave it as a no-op.
-
-**[QUALITY] Section badges in `Contact`, `Skills`, `Projects`, `About` — static text with `role="status" aria-live="polite"`**
-`role="status"` + `aria-live` is for dynamically-updating content. Screen readers will announce these static labels unexpectedly. Remove both attributes from the badge `<div>`.
+### [SEC-4] `console.error` in Contact.jsx:146
+Leaks network error details to the browser console. Replace with a generic log or remove — the `submitStatus === 'error'` UI already informs the user.
 
 ---
 
-### 5. UI/UX
+## 3. PERFORMANCE & OPTIMIZATION
 
-**[UX] No active nav indicator — no visual highlight for the section currently in view**
-Standard SPA portfolio behavior. Use IntersectionObserver on all sections to drive an active state in the Header nav.
+### [PERF-1] Avoid `Math.sqrt` in the inner loop — critical
 
-**[UX] About section has no image or avatar**
-Every other portfolio section has visual variety; About is pure text + numbers. Add a photo, avatar, or illustration.
+`NebulaBackground.jsx` runs `Math.sqrt(dx² + dy²)` for every star × every trail point, every frame. At 400 stars × 40 trail points = 16,000 sqrt calls per frame, 60fps = ~960,000 sqrts/second. Use squared distance to skip the sqrt when outside radius:
 
-**[UX] No CV/Resume download button**
-"Télécharger mon CV" is the primary action recruiters look for. The Hero CTAs currently skip it entirely.
+```js
+// In Star.update():
+const dist2 = dx * dx + dy * dy
+const r2 = STAR_REPULSION_RADIUS * STAR_REPULSION_RADIUS
+if (dist2 < r2 && dist2 > 0) {
+    const dist = Math.sqrt(dist2)  // only computed when actually inside radius
+    const force = (1 - dist / STAR_REPULSION_RADIUS) * point.life * 8
+    ...
+}
+```
 
-**[UX] Project cards have no screenshots or previews**
-All 3 cards are icon + text + tags. A thumbnail image would massively improve visual appeal and clarity.
+Apply the same pattern to `drawNebula` for cloud repulsion.
 
-**[UX] Typing effect doesn't erase — abrupt jump between phrases**
-Standard typewriter pattern: type → pause → erase character-by-character → type next. The current implementation hard-cuts.
+### [PERF-2] Time-based animation instead of frame-count
 
-**[UX] Typing effect: `typedText = ''` on first render causes cursor to appear before any text**
-`min-h-14` reduces the layout shift but the empty cursor blink is still visible.
+`time++` means animation speed depends on frame rate. At 120fps the nebula drifts twice as fast as at 60fps. Fix by using `requestAnimationFrame`'s timestamp:
 
-**[UX] Contact section right column (2 social links) is visually imbalanced on desktop**
-The left column has a full form; the right has 2 links + a location. Add an email address, availability badge, or response-time indicator.
+```js
+const animate = (timestamp) => {
+    if (!isActive) return
+    if (!lastTimestamp) lastTimestamp = timestamp
+    const delta = Math.min(timestamp - lastTimestamp, 50) // cap at 50ms to avoid big jumps
+    lastTimestamp = timestamp
+    time += delta  // time is now in milliseconds
+    ...
+}
+let lastTimestamp = 0
+requestAnimationFrame(animate)
+```
 
-**[UX] Skill descriptions hidden on mobile (`hidden sm:block`)**
-Mobile users see zero description for any skill. Reveal on tap, use a tooltip, or show a truncated version.
+Then all `time * speed` multipliers need to be rescaled (previously `time` was frames, now it's ms — divide existing speeds by ~16.67 to keep same visual speed).
 
-**[UX] Inconsistent self-description**
+### [PERF-3] Radial gradient object creation per star per frame
+
+Every frame, stars with `size > 0.8` (~85% of 400 stars) create a new `RadialGradient` object. That's ~340 allocations per frame. For desktop this causes GC pressure over time.
+
+Cache the gradient when size and brightness haven't changed significantly, or switch to a simple `ctx.shadowBlur` trick for the glow (much cheaper):
+
+```js
+// Replace the gradient glow in Star.draw() with:
+if (this.size > 0.8) {
+    ctx.shadowBlur = this.size * 8
+    ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha * 0.4})`
+    // re-draw the star center to trigger shadow
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+}
+```
+
+Note: `shadowBlur` has its own cost — benchmark both approaches.
+
+### [PERF-4] `memo` on components that receive no props
+
+`About`, `Skills`, `Projects`, and `Footer` all use `memo()` but accept zero props. `memo` is a no-op when there are no props to compare; remove it to reduce confusion.
+
+### [PERF-5] Unused CSS animations
+
+`index.css` defines `fadeInUp`, `fadeIn`, `slideInRight`, `scaleIn`, `pulse-slow`, `glow` animations and corresponding `.animate-*` classes. None of these appear to be used in JSX (the components use Tailwind utility animations or inline `transition-all`). Verify and remove unused definitions to reduce CSS bundle size.
+
+---
+
+## 4. ACCESSIBILITY
+
+### [A11Y-1] `*:focus { outline: none }` is dangerous
+
+`index.css:99` globally removes all outlines. The adjacent `*:focus-visible` rule restores them, but `focus-visible` is not supported in all assistive technology contexts. The safer pattern:
+
+```css
+/* Remove only for mouse users: */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+/* Keep for keyboard/AT: */
+*:focus-visible {
+    outline: 2px solid var(--color-ethereal-400);
+    outline-offset: 2px;
+}
+```
+
+### [A11Y-2] Redundant ARIA landmark roles
+
+`Header.jsx:127` — `<header role="banner">`: `<header>` already implies the `banner` landmark.
+`Header.jsx:133` — `<nav role="navigation">`: `<nav>` already implies `navigation`.
+Remove both redundant `role` attributes.
+
+### [A11Y-3] No active nav indicator
+
+Keyboard and sighted users have no visual cue for which section is currently in view. Implement with `IntersectionObserver` in a `useActiveSection` hook that returns the current section ID, then highlight the corresponding nav item in `Header.jsx`.
+
+```js
+// src/hooks/useActiveSection.js
+export function useActiveSection(ids) {
+    const [active, setActive] = useState(ids[0])
+
+    useEffect(() => {
+        const observers = ids.map(id => {
+            const el = document.getElementById(id)
+            if (!el) return null
+            const obs = new IntersectionObserver(
+                ([entry]) => { if (entry.isIntersecting) setActive(id) },
+                { threshold: 0.5 }
+            )
+            obs.observe(el)
+            return obs
+        })
+        return () => observers.forEach(o => o?.disconnect())
+    }, [ids])
+
+    return active
+}
+```
+
+In `Header.jsx`, apply `text-ethereal-400` (active) vs `text-gray-300` (inactive) per nav item.
+
+### [A11Y-4] Footer `handleKeyPress` on `<button>` elements is redundant
+
+`Footer.jsx:55–59` defines `handleKeyPress` to fire on Enter/Space. Native `<button>` elements already handle both keys natively. The `onKeyDown` handlers add noise with no functional gain. Remove `onKeyDown` from all `<button>` elements in Footer (keep it only if you were using non-button elements, which you aren't).
+
+### [A11Y-5] Skills section description hidden on desktop until hover
+
+`Skills.jsx:238` — `sm:opacity-0 sm:group-hover:opacity-100`. On desktop, description text is invisible until hover. Sighted keyboard users who tab into a card and never hover will miss the description entirely. Either always show descriptions at reduced opacity (e.g., `opacity-60 group-hover:opacity-100`), or use `focus-within:opacity-100` alongside `group-hover:opacity-100`.
+
+---
+
+## 5. STYLE & UX
+
+### [UX-1] Skills split into two groups — AGREED
+
+Split the 12 skills into two visual groups:
+- **"Maîtrisées"** — Avancé and above (GDScript, Python, Tailwind, Git, HTML5, JavaScript, React, CSS3, C++, Java)
+- **"En exploration"** — Débutant (Go, SQL)
+
+Separate them with a section divider inside the Skills section. The "En exploration" group can use a slightly different card style (lower opacity, dashed border) to signal "learning in progress" honestly.
+
+### [UX-2] About section needs a profile photo — ASSETS READY
+
+The About section is the only one with no visual anchor. Since a photo is available, add it as a circular avatar alongside the text content. On desktop: 2-column layout (photo left, text right). On mobile: photo centered above text. The photo creates trust and makes the portfolio personal.
+
+### [UX-3] CV download button in Hero — ASSETS READY
+
+Add a third CTA in `Hero.jsx` below the existing two buttons (or replace "Me contacter" with it and move Contact to the second position). Since a PDF is available:
+
+```jsx
+<a
+    href="/cv-matteo-marquant.pdf"
+    download
+    className="group w-full sm:w-auto px-8 py-4 border-2 border-dark-border ..."
+    aria-label="Télécharger mon CV (PDF)"
+>
+    ↓ Télécharger mon CV
+</a>
+```
+
+Add `cv-matteo-marquant.pdf` to `public/`.
+
+### [UX-4] Project screenshots — ASSETS READY
+
+The three project cards are icon + text. Screenshots would transform them visually. Since screenshots are available:
+
+1. Add `public/projects/project-r.png`, `sandysart.png`, `sprout-island.png`
+2. Add an `image` property to each project object in `Projects.jsx`
+3. Replace the emoji icon with a `<img>` thumbnail at the top of the card (16:9 ratio, `object-cover`)
+
+### [UX-5] Inconsistent self-description
+
 - Hero badge: *"Développeur en formation, orienté systèmes & création"*
-- Footer: *"Développeur Full Stack"*
-Pick one and use it consistently.
+- Footer: *"Développeur en formation"* (consistent)
+- Hero h1 subtitle: *"Étudiant en B2 Informatique passionné par le développement"*
+- JSON-LD: *"Développeur Full Stack"* (different again)
 
-**[UX] "Technologies maîtrisées" heading but Go and SQL are listed as "Débutant"**
-Overclaims competence. Consider "Technologies explorées" or split into two groups.
+Pick one identity and use it everywhere. "Développeur en formation" is honest. Update `index.html` JSON-LD `jobTitle` to match.
 
----
+### [UX-6] Hero stats duplicated in About
 
-### 6. Responsivity
+Hero shows: 8+ Technologies, 3 Projets, Toulouse.
+About shows the same three stats.
 
-**[BUG] `NebulaBackground.jsx` — stars don't redistribute on canvas resize (phone rotation)**
-`baseX`/`baseY` are set once at creation using the initial viewport size. After resize, stars are outside the new canvas bounds. Fix: call `stars.forEach(s => s.reset())` inside `resizeCanvas()`.
+Remove them from one location. Keep in Hero (immediate introduction), remove from About (replace with something unique, like a "currently learning" callout or a featured timeline).
 
-**[BUG] `NebulaBackground.jsx` — no `touchmove` listener; interactive trail is desktop-only**
-Add a `touchmove` event listener that maps `touches[0].clientX/Y` to the same trail array.
+### [UX-7] Contact right column is sparse
 
-**[PERF] `NebulaBackground.jsx` — 400 stars + per-frame O(n×trail) distance math is too heavy for mobile**
-Detect mobile (`navigator.maxTouchPoints > 0` or `window.innerWidth < 768`) and reduce star count to ~100-150.
+The right column has 2 social links and a location — thin content next to a full form. Since the user has an email available, adding it as a third link (mailto:) would balance the layout. Also add an availability badge: "Disponible pour une alternance — Septembre 2025" or similar.
 
-**[VISUAL] `Hero.jsx:116` — h1 at `text-5xl` (48px) on mobile; may overflow on 320px screens**
-Test on Galaxy Fold (280px) and iPhone SE (375px). Consider `text-4xl` at the smallest breakpoint or `text-balance`.
+### [UX-8] No page transition or loading state
 
-**[VISUAL] `NebulaBackground.jsx:18` — canvas height set to `window.innerHeight`**
-Mobile browser URL bar appearing/disappearing causes the canvas to flicker and resize repeatedly on scroll. Use `window.screen.height` or the CSS `100dvh` equivalent for the initial height.
+The first render shows the page immediately (no flash since there's no SSR), but there's no fade-in on initial load. A simple `opacity-0 → opacity-100` over 300ms on `<main>` would smooth the entry, especially when the nebula starts drawing after the React mount.
 
 ---
 
-### 7. Security
+## 6. CONTENT
 
-**[SEC] `index.html:19,27,35` — `og-image.jpg`, `twitter-image.jpg`, `apple-touch-icon.png` do not exist in `public/`**
-All three will 404 when the page is shared on social media or saved to a mobile home screen. Create the images or remove the tags.
+### [CONTENT-1] Missing assets — all confirmed available
 
-**[SEC] `index.html:34` — default Vite favicon (`/vite.svg`) still in use**
-Replace with a branded favicon for a professional portfolio.
+| Asset | Destination | Usage |
+|-------|-------------|-------|
+| Profile photo | `public/avatar.jpg` (or `.webp`) | About section, 2-col layout |
+| CV PDF | `public/cv-matteo-marquant.pdf` | Hero CTA download button |
+| Project screenshots | `public/projects/*.png` (3 files) | Project card thumbnails |
+| OG image | `public/og-image.jpg` (1200×630) | Social share preview |
+| Apple touch icon | `public/apple-touch-icon.png` (180×180) | iOS home screen |
 
-**[SEC] `Contact.jsx:16` — Formspree endpoint `mqezovvr` is visible in the client bundle with no honeypot**
-Add a hidden honeypot field (`<input name="_gotcha" style="display:none" tabIndex="-1" />`) that Formspree uses to reject bot submissions.
+### [CONTENT-2] Excessive JSDoc comments in component files
 
-**[SEC] No Content Security Policy**
-For a static SPA, add a minimal `<meta http-equiv="Content-Security-Policy">` or configure it at the deployment level.
-
-**[SEC] `Contact.jsx:208`, `Footer.jsx:121,131` — LinkedIn URL missing `www`**
-`https://linkedin.com/...` triggers a redirect. Use `https://www.linkedin.com/in/matteo-marquant-67469a266/`.
+`Header.jsx` (lines 4–14, 76, 91, 107), `Footer.jsx` (lines 4–12, 22, 39, 54), and `Contact.jsx` (lines 36, 63, 83, 101) all have multi-line JSDoc blocks that describe *what* the function does rather than *why*. A function named `scrollToSection` doesn't need a comment saying "Smooth scroll to a section by ID". Remove them.
 
 ---
 
-### 8. Improvements
+## 7. REMAINING CODE QUALITY
 
-**[IMPROVE] No React Error Boundary**
-If any component throws, the full page goes blank with no user-facing message. Wrap `<App>` in an `<ErrorBoundary>`.
+### [QUALITY-1] `memo` on zero-prop components
 
-**[IMPROVE] GitHub SVG path is copy-pasted 6+ times**
-Extract to `src/components/icons/GitHubIcon.jsx` (and similarly `LinkedInIcon.jsx`).
+`About.jsx:1`, `Skills.jsx:1` (still has `import { memo }`), `Projects.jsx:1`, `Footer.jsx:1` — `memo` has zero effect since these components receive no props. Remove the import and wrapper.
 
-**[IMPROVE] Typing effect: add erase phase**
-Type → pause (2s) → erase character-by-character → type next phrase. Currently just hard-cuts.
+### [QUALITY-2] `Header.jsx` constants inside component body
 
-**[IMPROVE] Project filtering / categories**
-Already noted in a comment in `Projects.jsx`. With more projects, tag-based filtering becomes necessary.
+`SCROLL_THRESHOLD = 20` and `MOBILE_MENU_ANIMATION_DELAY = 50` are defined inside `Header()`. Move them to module scope.
 
-**[IMPROVE] English version**
-French-only limits international reach. A language toggle or separate `/en` route would help for job applications abroad.
+### [QUALITY-3] Footer duplicates `scrollToSection` logic
+
+`Footer.jsx:40–48` reimplements `scrollToSection` manually instead of using `useScrollToSection`. Use the hook.
+
+### [QUALITY-4] `time++` makes nebula frame-rate dependent
+
+Covered in PERF-2 above. The animation appears to drift at different speeds on 120Hz vs 60Hz displays.
 
 ---
 
@@ -220,8 +519,11 @@ npm run preview   # Preview production build
 
 1. `npm run lint` → zero errors/warnings
 2. `npm run build` → clean build, no warnings
-3. DevTools Memory tab → no listener leaks after tab blur/focus
-4. Resize browser window → stars redistribute in canvas
-5. Chrome mobile emulator: iPhone SE (375px), Galaxy Fold (280px)
-6. Keyboard-only navigation through the full page
-7. Lighthouse audit → target 90+ on Performance, Accessibility, SEO
+3. Chrome DevTools Performance tab → no GC spikes during nebula animation
+4. Resize browser window → stars redistribute correctly in canvas
+5. Move mouse across the canvas → cursor glow trail visible
+6. Wait ~5–10 seconds on page → shooting star appears
+7. Wait ~20 seconds → supernova flare visible on a bright star
+8. Chrome mobile emulator: iPhone SE (375px), Galaxy Fold (280px)
+9. Keyboard-only navigation: Tab through entire page, check active nav highlight
+10. Lighthouse audit → target 90+ on Performance, Accessibility, SEO
