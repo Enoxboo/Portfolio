@@ -1,5 +1,7 @@
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { GitHubIcon } from './icons/GitHubIcon'
+import { TechIcon } from './icons/TechIcon'
+import { CameraIcon } from './icons/CameraIcon'
 
 const STAGGER_DELAY = 100
 
@@ -12,7 +14,8 @@ function Projects() {
             description: 'Un jeu d\'aventure immersif développé avec le moteur Godot Engine. Exploration d\'un monde interactif avec des mécaniques de gameplay innovantes, un système de quêtes dynamique et une narration qui s\'adapte aux choix du joueur.',
             tags: ['GDScript', 'Godot 4.x', 'Game Design', '2D'],
             link: 'https://github.com/Enoxboo/Project-R',
-            icon: '🎮',
+            // image: '/projects/project-r.png',
+            icon: 'godotengine',
             color: 'from-blue-500 to-purple-600'
         },
         {
@@ -20,7 +23,8 @@ function Projects() {
             description: 'Portfolio professionnel responsive pour un photographe avec galerie dynamique, interface élégante et optimisée. Intègre un système de filtrage par catégories, lightbox personnalisée et performances optimisées pour le chargement des images haute résolution.',
             tags: ['JavaScript', 'HTML5', 'CSS3', 'Responsive'],
             link: 'https://github.com/Enoxboo/sandysart-photo',
-            icon: '📸',
+            // image: '/projects/sandysart.png',
+            icon: 'camera',
             color: 'from-pink-500 to-rose-600'
         },
         {
@@ -28,7 +32,8 @@ function Projects() {
             description: 'Jeu de survie stratégique basé sur des choix où vous devez gérer vos ressources pour survivre sur une île déserte pendant 20 jours. Interface Tkinter soignée avec gestion de la faim, hydratation, énergie et événements aléatoires qui testent votre capacité d\'adaptation.',
             tags: ['Python', 'Tkinter', 'Game Dev', 'OOP'],
             link: 'https://github.com/Enoxboo/Sprout-Island',
-            icon: '🏝️',
+            // image: '/projects/sprout-island.png',
+            icon: 'python',
             color: 'from-green-500 to-emerald-600'
         }
     ]
@@ -49,7 +54,7 @@ function Projects() {
                     {/* Section badge */}
                     <div className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full">
                         <span className="text-sm sm:text-base text-ethereal-400 font-medium">
-                            💼 Réalisations
+                            Réalisations
                         </span>
                     </div>
 
@@ -102,12 +107,27 @@ function Projects() {
                                         aria-hidden="true"
                                     />
 
+                                    {project.image && (
+                                        <img
+                                            src={project.image}
+                                            alt=""
+                                            aria-hidden="true"
+                                            loading="lazy"
+                                            className="w-full aspect-video object-cover border-b border-dark-border/50"
+                                        />
+                                    )}
                                     <div className="relative flex-1 flex flex-col p-6 sm:p-8">
                                         {/* Icon + Title */}
-                                        <div className="flex items-start gap-4 mb-4">
-                                            <div className="text-4xl sm:text-5xl" role="img"
-                                                 aria-label={`Icône du projet ${project.title}`}>
-                                                {project.icon}
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div
+                                                className={`shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-linear-to-br ${project.color} bg-opacity-10 flex items-center justify-center`}
+                                                aria-hidden="true"
+                                            >
+                                                {project.icon === 'camera' ? (
+                                                    <CameraIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                                                ) : (
+                                                    <TechIcon slug={project.icon} className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                                                )}
                                             </div>
                                             <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-ethereal-400 transition-colors duration-300 flex-1 leading-tight">
                                                 {project.title}

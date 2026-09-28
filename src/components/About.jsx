@@ -4,24 +4,6 @@ import avatarUrl from '../assets/avatar.jpg'
 function About() {
     const { isVisible, sectionRef } = useScrollAnimation()
 
-    const stats = [
-        {
-            value: '8+',
-            label: 'Technologies',
-            ariaLabel: 'Plus de 8 technologies pratiquées incluant JavaScript, Python, et Go'
-        },
-        {
-            value: '3',
-            label: 'Projets majeurs',
-            ariaLabel: '3 projets majeurs réalisés en développement web et jeu vidéo'
-        },
-        {
-            value: '21',
-            label: 'Ans',
-            ariaLabel: "21 ans d'âge"
-        }
-    ]
-
     return (
         <section
             id="about"
@@ -100,32 +82,20 @@ function About() {
                                 </p>
                             </div>
 
-                            {/* Stats grid */}
+                            {/* Availability callout */}
                             <div
-                                className="grid grid-cols-3 gap-6 sm:gap-10 mt-10 sm:mt-12 pt-10 sm:pt-12 border-t border-dark-border/50"
-                                role="list"
-                                aria-label="Statistiques"
+                                className={`inline-flex items-center gap-3 mt-10 sm:mt-12 pt-10 sm:pt-12 border-t border-dark-border/50 w-full transition-all duration-500 ease-out ${
+                                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                                }`}
                             >
-                                {stats.map((stat, index) => (
-                                    <div
-                                        key={stat.label}
-                                        className={`text-center transition-all duration-500 ease-out ${
-                                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                                        }`}
-                                        style={{ transitionDelay: isVisible ? `${index * 100}ms` : '0ms' }}
-                                        role="listitem"
-                                    >
-                                        <div
-                                            className="text-3xl sm:text-4xl md:text-5xl font-bold text-ethereal-400 mb-2 sm:mb-3 tabular-nums"
-                                            aria-label={stat.ariaLabel}
-                                        >
-                                            {stat.value}
-                                        </div>
-                                        <div className="text-gray-400 text-xs sm:text-sm uppercase tracking-wider font-medium">
-                                            {stat.label}
-                                        </div>
-                                    </div>
-                                ))}
+                                <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+                                </span>
+                                <p className="text-sm sm:text-base text-gray-300">
+                                    <span className="text-white font-semibold">Disponible pour une alternance</span>
+                                    {' '}— à partir de septembre 2026
+                                </p>
                             </div>
                         </div>
                     </div>

@@ -1,23 +1,24 @@
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
+import { TechIcon } from './icons/TechIcon'
 
 const STAGGER_DELAY = 80
 
 const masteredSkills = [
-    { name: 'GDScript',    category: 'Game Dev',  icon: '🎮', color: 'from-indigo-500 to-purple-600', level: 'Avancé',        description: 'Godot Engine, Scenes, Signals' },
-    { name: 'Python',      category: 'Backend',   icon: '🐍', color: 'from-blue-500 to-indigo-600',   level: 'Avancé',        description: 'OOP, Data structures, Tkinter' },
-    { name: 'Tailwind',    category: 'Frontend',  icon: '💨', color: 'from-teal-400 to-cyan-600',     level: 'Avancé',        description: 'Utility-first, Responsive, Custom' },
-    { name: 'Git',         category: 'DevOps',    icon: '🔀', color: 'from-orange-600 to-red-700',    level: 'Avancé',        description: 'Versionning, Branches, Workflow' },
-    { name: 'HTML5',       category: 'Frontend',  icon: '🌐', color: 'from-orange-500 to-red-600',    level: 'Avancé',        description: 'Sémantique, Accessibilité' },
-    { name: 'JavaScript',  category: 'Full Stack', icon: '⚡', color: 'from-yellow-400 to-yellow-600', level: 'Intermédiaire', description: 'ES6+, Async/Await, DOM' },
-    { name: 'React',       category: 'Frontend',  icon: '⚛️', color: 'from-cyan-400 to-blue-600',    level: 'Intermédiaire', description: 'Hooks, Context, Performance' },
-    { name: 'CSS3',        category: 'Frontend',  icon: '🎨', color: 'from-pink-500 to-rose-600',     level: 'Intermédiaire', description: 'Flexbox, Grid, Animations' },
-    { name: 'C++',         category: 'Systems',   icon: '⚙️', color: 'from-slate-500 to-blue-700',   level: 'Intermédiaire', description: 'POO, Pointeurs, STL' },
-    { name: 'Java',        category: 'Backend',   icon: '☕', color: 'from-red-600 to-orange-700',    level: 'Intermédiaire', description: 'OOP, Spring basics' },
+    { name: 'GDScript',    category: 'Game Dev',  icon: 'godotengine', color: 'from-indigo-500 to-purple-600', level: 'Avancé',        description: 'Godot Engine, Scenes, Signals' },
+    { name: 'Python',      category: 'Backend',   icon: 'python',      color: 'from-blue-500 to-indigo-600',   level: 'Avancé',        description: 'OOP, Data structures, Tkinter' },
+    { name: 'Tailwind',    category: 'Frontend',  icon: 'tailwindcss', color: 'from-teal-400 to-cyan-600',     level: 'Avancé',        description: 'Utility-first, Responsive, Custom' },
+    { name: 'Git',         category: 'DevOps',    icon: 'git',         color: 'from-orange-600 to-red-700',    level: 'Avancé',        description: 'Versionning, Branches, Workflow' },
+    { name: 'HTML5',       category: 'Frontend',  icon: 'html5',       color: 'from-orange-500 to-red-600',    level: 'Avancé',        description: 'Sémantique, Accessibilité' },
+    { name: 'JavaScript',  category: 'Full Stack', icon: 'javascript', color: 'from-yellow-400 to-yellow-600', level: 'Intermédiaire', description: 'ES6+, Async/Await, DOM' },
+    { name: 'React',       category: 'Frontend',  icon: 'react',       color: 'from-cyan-400 to-blue-600',    level: 'Intermédiaire', description: 'Hooks, Context, Performance' },
+    { name: 'CSS3',        category: 'Frontend',  icon: 'css',         color: 'from-pink-500 to-rose-600',     level: 'Intermédiaire', description: 'Flexbox, Grid, Animations' },
+    { name: 'C++',         category: 'Systems',   icon: 'cplusplus',   color: 'from-slate-500 to-blue-700',   level: 'Intermédiaire', description: 'POO, Pointeurs, STL' },
+    { name: 'Java',        category: 'Backend',   icon: 'openjdk',     color: 'from-red-600 to-orange-700',    level: 'Intermédiaire', description: 'OOP, Spring basics' },
 ]
 
 const exploringSkills = [
-    { name: 'Go',  category: 'Backend',  icon: '🔷', color: 'from-cyan-600 to-blue-700',    level: 'Débutant', description: 'Concurrency, API REST' },
-    { name: 'SQL', category: 'Database', icon: '🗄️', color: 'from-emerald-500 to-teal-700', level: 'Débutant', description: 'Queries, Joins, Optimization' },
+    { name: 'Go',  category: 'Backend',  icon: 'go',       color: 'from-cyan-600 to-blue-700',    level: 'Débutant', description: 'Concurrency, API REST' },
+    { name: 'SQL', category: 'Database', icon: 'database', color: 'from-emerald-500 to-teal-700', level: 'Débutant', description: 'Queries, Joins, Optimization' },
 ]
 
 const levelColors = {
@@ -59,13 +60,10 @@ function SkillCard({ skill, index, isVisible, dimmed = false }) {
                 />
 
                 <div className="relative flex flex-col items-center text-center gap-3 sm:gap-4">
-                    <div
-                        className={`text-4xl sm:text-5xl lg:text-6xl transform group-hover:scale-110 transition-transform duration-300 ${dimmed ? 'opacity-70' : ''}`}
-                        role="img"
-                        aria-label={`Icône ${skill.name}`}
-                    >
-                        {skill.icon}
-                    </div>
+                    <TechIcon
+                        slug={skill.icon}
+                        className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-gray-300 group-hover:text-ethereal-400 transition-all duration-300 transform group-hover:scale-110 ${dimmed ? 'opacity-70' : ''}`}
+                    />
 
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-ethereal-400 transition-colors duration-300">
                         {skill.name}
@@ -129,7 +127,7 @@ function Skills() {
                     {/* Section badge */}
                     <div className="inline-block mb-4 sm:mb-6 px-4 sm:px-5 py-2 sm:py-2.5 bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-full">
                         <span className="text-sm sm:text-base text-ethereal-400 font-medium">
-                            🛠️ Compétences
+                            Compétences
                         </span>
                     </div>
 
@@ -217,7 +215,7 @@ function Skills() {
                     </div>
 
                     <p className="text-center text-sm sm:text-base text-gray-500 mt-8">
-                        Toujours en apprentissage continu pour explorer de nouvelles technologies 🚀
+                        Toujours en apprentissage continu pour explorer de nouvelles technologies.
                     </p>
                 </div>
             </div>

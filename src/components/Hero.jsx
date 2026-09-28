@@ -83,7 +83,7 @@ function Hero() {
                         }`}
                     >
                         <span className="text-sm sm:text-base text-ethereal-400 font-semibold tracking-wide">
-                            👨‍💻 Développeur en formation, orienté systèmes & création
+                            Développeur en formation, orienté systèmes & création
                         </span>
                     </div>
 
@@ -206,7 +206,7 @@ function Hero() {
                             </div>
                             <div>
                                 <div className="text-lg sm:text-xl font-bold text-white">Toulouse</div>
-                                <div className="text-xs sm:text-sm text-gray-500 uppercase tracking-wider">France 🇫🇷</div>
+                                <div className="text-xs sm:text-sm text-gray-500 uppercase tracking-wider">France</div>
                             </div>
                         </div>
                     </div>
